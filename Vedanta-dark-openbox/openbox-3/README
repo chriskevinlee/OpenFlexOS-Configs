@@ -1,0 +1,9 @@
+Created by Spoiledbroth for Openbox 3.6.1
+
+Vedanta-dark is an Openbox 3 theme intended to fit the stock GNOME Project Adwaita-dark theme. It is based off the work of several other individuals, having been forked from the Ambiance/Radiance themes for XFCE & LXDE by the RAVEfinity project. The RAVEfinity project discontinued maintaining the Ambiance/Radiance themes as of May 8th, 2015. 
+
+You can download a self-contained Adwaita-dark GTK 2/3 theme from https://www.gnome-look.org/p/1014995/ (thanks to Iki Shamuayka for providing the GTK theme) or get the latest code from the GNOME Project Github Mirror at https://github.com/GNOME/gtk/tree/master/gtk/theme/Adwaita
+
+Ambiance/Radiance for XFCE & LXDE by RAVEfinity project was based upon:
+- Ambiance Openbox Theme by David Barr (C) 2010 GPL. (http://david.chalkskeletons.com/)
+- Ambiance Openbox Theme, Fixes and code by RAVEfinity (Jared Sot.) (C)2012-2014

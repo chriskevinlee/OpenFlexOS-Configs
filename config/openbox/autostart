@@ -1,0 +1,50 @@
+#
+# These things are run when an Openbox X Session is started.
+# You may place a similar script in $HOME/.config/openbox/autostart
+# to run user-specific things.
+#
+
+# If you want to use GNOME config tools...
+#
+#if test -x /usr/lib/openbox/gnome-settings-daemon >/dev/null; then
+#  /usr/lib/openbox/gnome-settings-daemon &
+#elif which gnome-settings-daemon >/dev/null 2>&1; then
+#  gnome-settings-daemon &
+#fi
+
+# If you want to use XFCE config tools...
+#
+#xfce-mcs-manager &
+
+source /home/$USER/.config/openbox/scripts/sounds.sh
+if [[ ! -z "$login_sound" ]]; then
+    mpv --no-video "${sounds_dir}${login_sound}" &
+fi
+
+
+#Vbox Only
+xrandr -s 1920x1080 &
+
+flameshot &
+tint2 -c /home/$USER/.config/openbox/tint2/tint2rc &
+nitrogen --restore &
+xscreensaver -no-splash &
+
+
+CONFIG_FILE="/home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper"
+# Check if the configuration file exists and is not empty
+if [ -s "$CONFIG_FILE" ]; then
+  # Read the saved wallpaper path
+  SELECTED_WALLPAPER=$(cat "$CONFIG_FILE")
+
+  # Apply the wallpaper using feh
+  feh --bg-scale "$SELECTED_WALLPAPER" &
+elif [ ! -f "$CONFIG_FILE" ]; then
+        echo /home/$USER/.config/wallpapers/default/6xVGpvY-arch-linux-wallpaper.png > /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
+        SELECTED_WALLPAPER=$(cat "$CONFIG_FILE")
+        feh --bg-scale "$SELECTED_WALLPAPER" &
+fi
+
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+picom &
