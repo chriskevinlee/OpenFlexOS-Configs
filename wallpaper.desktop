@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Wallpaper Changer
+Exec="/usr/local/bin/wallpaper_changer.sh"
+Comment=Change wallpapers
+Categories=System;Utility;
+Terminal=false
