@@ -14,5 +14,5 @@ elif [ "$1" = "down" ]; then
     dunstify -r 8763 "Volume Control" "$current_volume"
 fi
 
-current_volume=$(pactl list sinks | awk '/^\s*Volume:/ {print $5}')
+current_volume=$(pactl list sinks | grep -m 1 'Volume:' | awk -F'/' '{print $2}' | sed 's/[^0-9%]//g')
 echo " 󰕾 $current_volume"
