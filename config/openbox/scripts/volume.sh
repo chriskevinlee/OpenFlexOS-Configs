@@ -6,11 +6,11 @@ volume_decrease="-10%"
 
 if [ "$1" = "up" ]; then
     pactl set-sink-volume @DEFAULT_SINK@ "$volume_increase"
-    current_volume=$(pactl list sinks | awk '/^\s*Volume:/ {print $5}')
+    current_volume=$(pactl list sinks | grep -m 1 'Volume:' | awk -F'/' '{print $2}' | sed 's/[^0-9%]//g')
     dunstify -r 6534 "Volume Control" "$current_volume"
 elif [ "$1" = "down" ]; then
     pactl set-sink-volume @DEFAULT_SINK@ "$volume_decrease"
-    current_volume=$(pactl list sinks | awk '/^\s*Volume:/ {print $5}')
+    current_volume=$(pactl list sinks | grep -m 1 'Volume:' | awk -F'/' '{print $2}' | sed 's/[^0-9%]//g')
     dunstify -r 6534 "Volume Control" "$current_volume"
 fi
 
