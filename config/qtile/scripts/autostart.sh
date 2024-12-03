@@ -1,7 +1,11 @@
 #!/bin/bash
 xrandr -s 1920x1080 &
 
-/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+if command -v /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+        /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+elif command -v /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+        /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+fi
 
 flameshot &
 
