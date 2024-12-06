@@ -279,14 +279,23 @@ screens = [
                     foreground='#ccff00',  # Electric Lime
                     format='   {MemPercent}%',
                 ),
+		widget.Spacer(length=10),
+		widget.WindowName(
+                    foreground='#39ff14',  # Neon Greenf
+                    scroll=True,
+                    scroll_delay=2,
+                    scroll_interval=0.1,
+                    scroll_step=2,
+                    scroll_repeat=True,
+                    scroll_clear=False,
+                    scroll_fixed_width=True,
+                    width=200,
+                ),
                 widget.Spacer(),
                 widget.GroupBox(
                     active='#ffd700',  # Gold1
                 ),
-                widget.WindowName(
-                    foreground='#39ff14',  # Neon Greenf
-                    max_chars=70
-                ),
+		widget.Spacer(),
                 widget.Systray(),
                 widget.Spacer(length=20),
                 widget.CurrentLayout(
