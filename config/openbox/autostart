@@ -53,3 +53,5 @@ elif command -v /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 >/dev/
 fi
 
 picom &
+
+/home/$USER/.config/openbox/scripts/Battery_Hibernate.sh &
