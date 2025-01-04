@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Set in Percentage when you get a notifcation when the battery is low
+# Set in Percentage when you get a notification when the battery is low
 WARNING_PERCENT=31
 
-# Set in Percentage when you get a notifcation and sound when the battery is low
+# Set in Percentage when you get a notification and sound when the battery is low
 HIBERNATE_PERCENT=16
 
 # Set sound and notification time (in seconds)
@@ -13,24 +13,28 @@ PRE_HIBERNATE=10
 HIBERNATE_WAIT=120
 
 while true; do
-    BATTERY_DIR=$(ls /sys/class/power_supply/ | grep BAT || echo "BAT0")
+    # Check if a battery is available
+    BATTERY_DIR=$(ls /sys/class/power_supply/ | grep BAT || echo "")
+    if [[ -z $BATTERY_DIR ]]; then
+        echo "No battery detected. Exiting."
+        exit 0
+    fi
+
     STATUS=$(cat /sys/class/power_supply/$BATTERY_DIR/status)
     CAPACITY=$(cat /sys/class/power_supply/$BATTERY_DIR/capacity)
 
     # Skip checks if the charger is connected
     if [[ $STATUS == "Charging" ]]; then
+        sleep 60  # Check again in 60 seconds
         continue
     fi
 
     # Hibernation condition
     if [[ $CAPACITY -lt $HIBERNATE_PERCENT ]] && [[ $STATUS != "Charging" ]]; then
-        #echo "Hibernating in $HIBERNATE_WAIT seconds..."
-
         # Countdown with periodic status checks
         for ((i = $HIBERNATE_WAIT; i > 0; i--)); do
-            STATUS=$(cat /sys/class/power_supply/BAT1/status)
+            STATUS=$(cat /sys/class/power_supply/$BATTERY_DIR/status)
             if [[ $STATUS == "Charging" ]]; then
-                #echo "Charger connected during countdown. Cancelling hibernation."
                 break
             fi
 
