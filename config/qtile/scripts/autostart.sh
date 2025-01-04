@@ -33,3 +33,5 @@ xscreensaver -no-splash &
 conky -c ~/.config/qtile/conky/conky.conf &
 
 picom &
+
+/home/$USER/.config/qtile/scripts/Battery_Hibernate.sh &
