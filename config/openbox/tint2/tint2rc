@@ -226,6 +226,7 @@ execp_icon_w = 30
 execp_icon_h =30
 execp_lclick_command = /home/$USER/.config/openbox/scripts/volume.sh up
 execp_rclick_command = /home/$USER/.config/openbox/scripts/volume.sh down
+execp_mclick_command = /home/$USER/.config/openbox/scripts/volume.sh mute
 execp_font = 18
 
 # Battery
