@@ -7,6 +7,85 @@ import os
 import subprocess
 from libqtile import hook
 
+def init_bar():
+    return bar.Bar(
+        [
+                widget.TextBox(
+                    text=" ",
+                    foreground='#00ffff',  # Aqua
+                    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("applications.sh"))}
+                ),
+                widget.Spacer(length=10),
+                widget.Clock(
+                    foreground='#4666ff',  # Neon Blue
+                    format="  %a %d-%m-%Y",
+                    #format="  %a %d-%B-%Y",
+                ),
+                widget.Spacer(length=10),
+                widget.Clock(
+                    foreground='#ffe135',  # Banana Yellow
+                    format="  %I:%M:%S %p",
+                ),
+                widget.Spacer(length=10),
+                widget.CPU(
+                    format='   {load_percent}%',
+                    foreground='#ff5800',  # Orange (Crayola)
+                ),
+                widget.Spacer(length=10),
+                widget.Memory(
+                    foreground='#ccff00',  # Electric Lime
+                    format='   {MemPercent}%',
+                ),
+        widget.Spacer(length=10),
+        widget.WindowName(
+                    foreground='#39ff14',  # Neon Greenf
+                    scroll=True,
+                    scroll_delay=2,
+                    scroll_interval=0.1,
+                    scroll_step=2,
+                    scroll_repeat=True,
+                    scroll_clear=False,
+                    scroll_fixed_width=True,
+                    width=200,
+                ),
+                widget.Spacer(),
+                widget.GroupBox(
+                    active='#ffd700',  # Gold1
+                ),
+        widget.Spacer(),
+                widget.Systray(),
+                widget.Spacer(length=20),
+                widget.CurrentLayout(
+                    foreground='#fc74fd',  # Pink Flamingo
+                ),
+                widget.Spacer(length=10),
+                BrightnessWidget(),
+                VolumeWidget(),
+                widget.Spacer(length=10),
+                widget.CheckUpdates(
+                    distro="Arch",
+                    colour_have_updates='#f38fa9',
+                    colour_no_updates='#f38fa9',
+                    display_format='󰇚 {updates}',
+                ),
+                widget.Spacer(length=10),
+                battery_widget(),
+                widget.Spacer(length=10),
+                script_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
+                ssh_widget,
+                widget.Spacer(length=10),
+                current_user_widget,
+                widget.TextBox(
+                    text="⏻ ",
+                    foreground='#00ff7f',  # SpringGreen1
+                    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("power.sh"))},
+
+                ),
+                # End of My Config: Added and moved widgets
+        ],
+        24,  # Bar size (height in pixels)
+    )
+
 @lazy.function
 def resize_floating_window(qtile, width: int = 0, height: int = 0):
     w = qtile.current_window
@@ -26,9 +105,9 @@ def get_script_path(script_name):
     return os.path.join(home_dir, ".config", "qtile", "scripts", script_name)
 
 def battery_widget():
-    if os.path.exists("/sys/class/power_supply/BAT0"):
+    if os.path.exists("/sys/class/power_supply/BAT1"):
         return widget.Battery(
-            battery="BAT0",
+            battery="BAT1",
             charge_char="󰂄 ",
             discharge_char="  ",
             format="{char} {percent:2.0%}",
@@ -48,7 +127,7 @@ class VolumeWidget(TextBox):
         self.update_volume()
 
         # Add callbacks to the widget
-        self.add_callbacks({'Button1': self.on_left_click, 'Button3': self.on_right_click})
+        self.add_callbacks({'Button1': self.on_left_click, 'Button2': self.on_middle_click, 'Button3': self.on_right_click})
 
     def update_volume(self):
         # Run your volume.sh script to get the volume level or mute state
@@ -62,6 +141,10 @@ class VolumeWidget(TextBox):
 
     def on_right_click(self):
         subprocess.run([get_script_path("volume.sh"), "down"])
+        self.update_volume()
+
+    def on_middle_click(self):
+        subprocess.run([get_script_path("volume.sh"), "mute"])
         self.update_volume()
 
 class BrightnessWidget(TextBox):
@@ -81,12 +164,12 @@ class BrightnessWidget(TextBox):
     def on_left_click(self):
         subprocess.run([get_script_path("brightness.sh"), "up"])
         self.brightness()
-        
+
 
     def on_right_click(self):
         subprocess.run([get_script_path("brightness.sh"), "down"])
         self.brightness()
-        
+
 
 # Create an instance of VolumeWidget
 volume_widget = VolumeWidget()
@@ -154,7 +237,7 @@ keys = [
      Key([mod], "i", lazy.layout.grow()),
     # shrink/resize Windows in monadtall
      Key([mod], "m", lazy.layout.shrink()),
-    
+
     # Grow/shrink/resize in floating mode
     Key([alt], "l", resize_floating_window(width=10), desc='increase width by 10'),
     Key([alt], "h", resize_floating_window(width=-10), desc='decrease width by 10'),
@@ -188,7 +271,7 @@ keys = [
 
     # Start of My Config: setting my own keys
     Key([alt], "q", lazy.spawn(get_script_path("power.sh")), desc="powermenu"),
-    Key([alt], "d", lazy.spawn(get_script_path("applications.sh")), desc="menu"),  
+    Key([alt], "d", lazy.spawn(get_script_path("applications.sh")), desc="menu"),
     Key([alt], "f", lazy.spawn("firefox")),
     # End of My Config: setting my own keys
 ]
@@ -233,12 +316,12 @@ for i in groups:
     )
 
 layouts = [
-    # Start of My Config: Added margin of 15 to default layouts and move them up  
+    # Start of My Config: Added margin of 15 to default layouts and move them up
     layout.MonadTall(margin=15),
     layout.MonadWide(margin=15),
     layout.RatioTile(margin=15),
     layout.TreeTab(),
-    # End Start of My Config: Added margin of 15 to default layouts and move them up  
+    # End Start of My Config: Added margin of 15 to default layouts and move them up
 ]
 
 widget_defaults = dict(
@@ -250,85 +333,11 @@ extension_defaults = widget_defaults.copy()
 
 # Start of My Config: Added and moved widgets
 screens = [
-    Screen(
-        top=bar.Bar(
-            [
-                widget.TextBox(
-                    text=" ",
-                    foreground='#00ffff',  # Aqua
-                    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("applications.sh"))}
-                ),
-                widget.Spacer(length=10),
-                widget.Clock(
-                    foreground='#4666ff',  # Neon Blue
-                    format="  %a %d-%m-%Y",
-                    #format="  %a %d-%B-%Y",
-                ),
-                widget.Spacer(length=10),
-                widget.Clock(
-                    foreground='#ffe135',  # Banana Yellow
-                    format="  %I:%M:%S %p",
-                ),
-                widget.Spacer(length=10),
-                widget.CPU(
-                    format='   {load_percent}%', 
-                    foreground='#ff5800',  # Orange (Crayola)
-                ),
-                widget.Spacer(length=10),
-                widget.Memory(
-                    foreground='#ccff00',  # Electric Lime
-                    format='   {MemPercent}%',
-                ),
-		widget.Spacer(length=10),
-		widget.WindowName(
-                    foreground='#39ff14',  # Neon Greenf
-                    scroll=True,
-                    scroll_delay=2,
-                    scroll_interval=0.1,
-                    scroll_step=2,
-                    scroll_repeat=True,
-                    scroll_clear=False,
-                    scroll_fixed_width=True,
-                    width=200,
-                ),
-                widget.Spacer(),
-                widget.GroupBox(
-                    active='#ffd700',  # Gold1
-                ),
-		widget.Spacer(),
-                widget.Systray(),
-                widget.Spacer(length=20),
-                widget.CurrentLayout(
-                    foreground='#fc74fd',  # Pink Flamingo
-                ),
-                widget.Spacer(length=10),
-                BrightnessWidget(),
-                VolumeWidget(),
-                widget.Spacer(length=10),
-                widget.CheckUpdates(
-                    distro="Arch",
-                    colour_have_updates='#f38fa9',
-                    colour_no_updates='#f38fa9', 
-                    display_format='󰇚 {updates}',
-                ),
-                widget.Spacer(length=10),
-                battery_widget(),
-                widget.Spacer(length=10),
-                script_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
-                ssh_widget,
-                widget.Spacer(length=10),
-                current_user_widget,
-                widget.TextBox(
-                    text="⏻ ",
-                    foreground='#00ff7f',  # SpringGreen1
-                    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("power.sh"))},
-                ),
-                # End of My Config: Added and moved widgets
-            ],
-            24,
-        ),
-    ),
+    Screen(top=init_bar()),  # Screen 1
+    Screen(top=init_bar()),  # Screen 2
+    Screen(top=init_bar()),  # Screen 3
 ]
+
 
 # Drag floating layouts.
 mouse = [
