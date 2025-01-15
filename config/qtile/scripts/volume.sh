@@ -7,11 +7,13 @@ notification_id=6534
 
 # Get current mute and volume status
 get_current_volume() {
-    pactl list sinks | awk '/^\s*Volume:/ {print $5}' | head -n 1
+    #pactl list sinks | awk '/^\s*Volume:/ {print $5}' | head -n 1
+    pactl list sinks | grep -m 1 'Volume:' | awk '{print $5}'
 }
 
 get_mute_status() {
-    pactl list sinks | awk '/Mute:/ {print $2}' | head -n 1
+    #pactl list sinks | awk '/Mute:/ {print $2}' | head -n 1
+    pactl list sinks | grep -m 1 'Mute:' | awk '{print $2}'
 }
 
 if [ "$1" = "up" ]; then
