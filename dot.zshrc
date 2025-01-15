@@ -45,21 +45,27 @@ bindkey '^[[3~' delete-char
 source /usr/share/zsh/plugins/zsh-sudo/sudo.plugin.zsh
 
 
+alias du='du -h'
+alias df='df -h'
+alias ls='lsd'
+alias c='clear'
+alias n='nano'
+alias v='vim'
+alias s='sudo'
+
+
+if command -v apt >> /dev/null; then
+    alias a='apt'
+fi
+
+if command -v pacman >> /dev/null; then
+    alias pm='pacman'
+fi
+
+
 batcat=$(command -v batcat)
 if [ -n "$batcat" ]; then
         alias cat='batcat -p'
 else
         alias cat='bat -p'
 fi
-
-alias du='du -h'
-
-alias df='df -h'
-
-alias pacs='sudo pacman -Sy'
-
-alias pacu='sudo pacman -Syu'
-
-alias paci='sudo pacman -S'
-
-alias ls='lsd'
