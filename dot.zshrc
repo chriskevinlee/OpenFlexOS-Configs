@@ -47,6 +47,7 @@ source /usr/share/zsh/plugins/zsh-sudo/sudo.plugin.zsh
 
 alias du='du -h'
 alias df='df -h'
+alias free='free -h'
 alias ls='lsd'
 alias c='clear'
 alias n='nano'
