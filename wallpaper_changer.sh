@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Launch sxiv in the background
-sxiv -t -r /home/chris/.config/wallpapers &
+sxiv -t -r /home/$USER/.config/wallpapers &
 
 # Wait for a moment to ensure the window is created
 sleep 1
