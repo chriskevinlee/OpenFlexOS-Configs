@@ -51,7 +51,7 @@ elif [ -z "$1" ]; then
         echo " Muted"
     else
         current_volume=$(get_current_volume)
-        echo " $current_volume"
+        echo "󰕾 $current_volume"
     fi
 else
     echo "Usage: $0 {up|down|mute|play|next|prev}"
