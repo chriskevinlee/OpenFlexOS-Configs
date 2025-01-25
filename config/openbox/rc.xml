@@ -185,6 +185,38 @@
         <wrap>no</wrap>
       </action>
     </keybind>
+
+<keybind key="XF86AudioRaiseVolume">
+    <action name="Execute">
+        <command>/home/chris/.config/openbox/scripts/volume.sh up</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioLowerVolume">
+    <action name="Execute">
+        <command>/home/chris/.config/openbox/scripts/volume.sh down</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioMute">
+    <action name="Execute">
+        <command>/home/chris/.config/openbox/scripts/volume.sh mute</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioPlay">
+    <action name="Execute">
+        <command>/home/chris/.config/openbox/scripts/volume.sh play</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioNext">
+    <action name="Execute">
+        <command>/home/chris/.config/openbox/scripts/volume.sh next</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioPrev">
+    <action name="Execute">
+        <command>/home/chris/.config/openbox/scripts/volume.sh prev</command>
+    </action>
+</keybind>
+
     <keybind key="C-A-Right">
       <action name="GoToDesktop">
         <to>right</to>
