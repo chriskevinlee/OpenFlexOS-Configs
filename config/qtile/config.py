@@ -185,18 +185,43 @@ def get_nmcli_output():
 #############################################################
 ############### Variables ###################################
 #############################################################
+# Alternative modifier key (Alt key)
 alt = "mod1"
+
+# Primary modifier key (Super/Windows key)
 mod = "mod4"
+
+# Automatically detect the default terminal emulator
 terminal = guess_terminal()
+
+# Define workspaces/groups (1-9) for window management
 groups = [Group(i) for i in "123456789"]
+
+# No key bindings for dynamically assigned groups
 dgroups_key_binder = None
+
+# No specific application rules for dynamic groups
 dgroups_app_rules = []  # type: list
+
+# Focus follows the mouse cursor when hovering over a window
 follow_mouse_focus = True
+
+# Clicking on a window does not bring it to the front
 bring_front_click = False
+
+# Keep floating windows above tiled windows
 floats_kept_above = True
+
+# Disable cursor warping when switching focus between windows
 cursor_warp = False
+
+# Enable automatic fullscreen for certain applications
 auto_fullscreen = True
+
+# Automatically focus on newly opened windows based on context
 focus_on_window_activation = "smart"
+
+# Reload screen configurations when they change (e.g., external monitors)
 reconfigure_screens = True
 
 # Keybindings
@@ -273,7 +298,6 @@ layouts = [
     layout.TreeTab(),
 ]
 
-
 # Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
@@ -291,7 +315,6 @@ current_user_widget = widget.TextBox(
     text=get_current_user(),
     foreground='#ffe135',  # Choose your desired color
 )
-
 
 script_widget = widget.GenPollText(
     func=get_nmcli_output,
