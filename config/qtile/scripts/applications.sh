@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: A Script that uses rofi or dmenu for a application launcher by commenting or uncommenting the approprate variable
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi,dmenu
+# Usage: ./applications.sh
+# Notes:
+# ================================================================
+
 #launcher=rofi
 launcher=dmenu
 

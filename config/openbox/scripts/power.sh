@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: Power Menu using Rofi or dmenu
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi,dmenu
+# Usage: Add to a panel or bar or run./power.sh
+# Notes:
+# ================================================================
+
 source /home/$USER/.config/openbox/scripts/sounds.sh
 
 #launcher="rofi -config /home/$USER/.config/openbox/rofi/config.rasi -dmenu"

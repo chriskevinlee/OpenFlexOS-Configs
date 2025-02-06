@@ -1,5 +1,12 @@
 #!/bin/bash
-xrandr -s 1920x1080 &
+
+# ================================================================
+# Description: This is a startup script for qtile window manager
+# Author: Chris Lee
+# Dependencies:
+# Usage:
+# Notes:
+# ================================================================
 
 if command -v /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
         /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &

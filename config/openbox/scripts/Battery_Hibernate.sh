@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This script will monitor device battery when it goes too low you will give a notifcation, once the battery is about to run out to gives a audible warning with a notifcation
+# Author: Chris Lee, ChatGPT
+# Dependencies: mpv, dunstify
+# Usage: add to a startup script(Recommened) or ./Battery_Hibernate.sh from terminal(Not Recommened)
+# Notes: Feel free to ajust variables.
+# ================================================================
+
 # Set in Percentage when you get a notification when the battery is low
 WARNING_PERCENT=31
 

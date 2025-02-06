@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: Power Menu using Rofi or dmenu
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi,dmenu, NerdFontsSymbolsOnly(https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip)
+# Usage: Add to a panel or bar or run./power.sh
+# Notes:
+# ================================================================
+
 source /home/$USER/.config/qtile/scripts/sounds.sh
 
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"

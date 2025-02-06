@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This script uses rofi or dmenu to create a ssh menu to allow quick connections to a ssh server by adding a name and ssh comment to a text file
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi, dmenu, ssh
+# Usage: Add to a panel or bar or run./ssh.sh
+# Notes:
+# ================================================================
+
 # Define the SSH directory and server list file paths
 # servers.txt formatting: Server Name | ssh user@ip_add
 SSH_DIR="$HOME/.ssh"

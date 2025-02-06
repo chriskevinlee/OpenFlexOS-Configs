@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This script allows media control includes volume up,down or mute. Also allows play next prev
+# Author: Chris Lee, ChatGPT
+# Dependencies: pipewire-pulse, dunstify
+# Usage: Add to a panel or bar or run./volume.sh or ./volume.sh up|down|mute|play|next|prev
+# Notes:
+# ================================================================
+
 volume_increase="+10%"
 volume_decrease="-10%"
 volume_mute="toggle"
