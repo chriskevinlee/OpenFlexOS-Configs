@@ -14,33 +14,29 @@ PID_FILE="/tmp/wallpaper_timer.pid"
 start_random_wallpaper() {
     local INTERVAL_INPUT="$1"
 
-    # Validate input format (must be a number followed by 's' or 'm')
     if [[ "$INTERVAL_INPUT" =~ ^([0-9]+)([smSM])$ ]]; then
         VALUE="${BASH_REMATCH[1]}"
         UNIT="${BASH_REMATCH[2]}"
 
-        # Convert to seconds
-        if [[ "$UNIT" == "s" || "$UNIT" == "S" ]]; then
-            INTERVAL=$VALUE
-        elif [[ "$UNIT" == "m" || "$UNIT" == "M" ]]; then
-            INTERVAL=$((VALUE * 60))
+        if [[ "$UNIT" =~ [mM] ]]; then
+            INTERVAL=$((VALUE * 60))  # Convert minutes to seconds
         else
-            echo "Invalid unit. Use 's' for seconds or 'm' for minutes."
-            exit 1
+            INTERVAL=$VALUE  # Use seconds directly
         fi
     else
         echo "Invalid format. Use a number followed by 's' (seconds) or 'm' (minutes)."
         exit 1
     fi
 
-    # Kill any existing wallpaper changer
     stop_random_wallpaper
 
-    # Start the wallpaper changer in the background
-    ( while true; do
-        feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
-        sleep "$INTERVAL"
-    done ) &
+    # Start the wallpaper changer properly in a background loop
+    (
+        while true; do
+            feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
+            sleep "$INTERVAL"
+        done
+    ) > /dev/null 2>&1 &  # Redirect output to avoid clutter
 
     echo $! > "$PID_FILE"
     echo "Wallpaper timer started with a $INTERVAL_INPUT interval!"
@@ -48,7 +44,7 @@ start_random_wallpaper() {
 
 stop_random_wallpaper() {
     if [[ -f "$PID_FILE" ]]; then
-        kill "$(cat "$PID_FILE")"
+        kill "$(cat "$PID_FILE")" 2>/dev/null
         rm "$PID_FILE"
         echo "Wallpaper timer stopped!"
     else
@@ -56,75 +52,55 @@ stop_random_wallpaper() {
     fi
 }
 
-# Handle command-line arguments
-if [[ "$1" == "random" && -n "$2" ]]; then
-    start_random_wallpaper "$2"
-    exit 0
-elif [[ "$1" == "stop" ]]; then
-    stop_random_wallpaper
-    exit 0
-fi
+select_wallpaper() {
+    sxiv -t -r "$WALLPAPER_DIR" &
+    sleep 1
+    window_id=$(wmctrl -l | grep "sxiv" | awk '{print $1}')
+    if [ -z "$window_id" ]; then
+        zenity --error --text="sxiv window not found!"
+        exit 1
+    fi
+    wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
+}
 
-# Check if the timer is running
-if [[ -f "$PID_FILE" ]] && pgrep -F "$PID_FILE" > /dev/null; then
-    MENU_OPTION="Stop Random Wallpaper"
-else
-    MENU_OPTION="Start Random Wallpaper"
-fi
+# Command-line options
+case "$1" in
+    "random")
+        if [[ "$2" == "stop" ]]; then
+            stop_random_wallpaper
+        elif [[ -n "$2" ]]; then
+            start_random_wallpaper "$2"
+        else
+            feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
+        fi
+        exit 0
+        ;;
+    "select")
+        select_wallpaper
+        exit 0
+        ;;
+esac
+
+# GUI Menu
+MENU_OPTION=$( [[ -f "$PID_FILE" && $(pgrep -F "$PID_FILE") ]] && echo "Stop Random Wallpaper" || echo "Start Random Wallpaper" )
 
 CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" \
     "Select Wallpaper" "Random Wallpaper" "$MENU_OPTION")
 
 case "$CHOICE" in
-    "Select Wallpaper")
-        sxiv -t -r "$WALLPAPER_DIR" &
-        sleep 1
-        window_id=$(wmctrl -l | grep "sxiv" | awk '{print $1}')
-        if [ -z "$window_id" ]; then
-            zenity --error --text="sxiv window not found!"
-            exit 1
-        fi
-        wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
-        ;;
-
-    "Random Wallpaper")
-        feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
-        ;;
-
+    "Select Wallpaper") select_wallpaper ;;
+    "Random Wallpaper") feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \)) ;;
     "Start Random Wallpaper")
-        INTERVAL_MIN=$(zenity --list --title="Set Wallpaper Interval" --column="Options" \
-            "5 minutes" "10 minutes" "20 minutes" "30 minutes" "60 minutes" "Custom" \
-            --text="Choose a time interval:")
-
-        case "$INTERVAL_MIN" in
-            "5 minutes") INTERVAL="5m" ;;
-            "10 minutes") INTERVAL="10m" ;;
-            "20 minutes") INTERVAL="20m" ;;
-            "30 minutes") INTERVAL="30m" ;;
-            "60 minutes") INTERVAL="60m" ;;
-            "Custom")
-                INTERVAL=$(zenity --entry --title="Custom Interval" --text="Enter time (e.g., 30s for seconds, 10m for minutes):")
-                if ! [[ "$INTERVAL" =~ ^[0-9]+[smSM]$ ]]; then
-                    zenity --error --text="Invalid input. Use a number followed by 's' (seconds) or 'm' (minutes)."
-                    exit 1
-                fi
-                ;;
-            *)
-                zenity --error --text="Invalid selection."
-                exit 1
-                ;;
-        esac
-
+        INTERVAL=$(zenity --list --title="Set Wallpaper Interval" --column="Options" \
+            "5m" "10m" "20m" "30m" "60m" "Custom" --text="Choose a time interval:")
+        [[ "$INTERVAL" == "Custom" ]] && INTERVAL=$(zenity --entry --title="Custom Interval" --text="Enter time (e.g., 30s, 10m):")
+        [[ ! "$INTERVAL" =~ ^[0-9]+[smSM]$ ]] && { zenity --error --text="Invalid input."; exit 1; }
         start_random_wallpaper "$INTERVAL"
-        exec "$0" # Restart script to update menu option
+        exec "$0"
         ;;
-
     "Stop Random Wallpaper")
         stop_random_wallpaper
-        exec "$0" # Restart script to update menu option
+        exec "$0"
         ;;
-
-    *)
-        echo "No selection made."
-        ;;
+    *) echo "No selection made." ;;
 esac
