@@ -8,7 +8,7 @@
 # Notes:
 # ================================================================
 
-WALLPAPER_DIR="$HOME/.config/wallpapers"
+WALLPAPER_DIRS=("$HOME/.config/wallpapers")
 PID_FILE="/tmp/wallpaper_timer.pid"
 
 start_random_wallpaper() {
