@@ -4,7 +4,7 @@
 # Description: This script ask the user to set a user selected wallpaper, a random wallpaper or to have a random wallpaper set at a specific interval set by the user
 # Author: Chris Lee, ChatGPT
 # Dependencies: sxiv, zenity, wmctrl, feh
-# Usage:
+# Usage: ./wallpaper_changer.sh
 # Notes:
 # ================================================================
 
