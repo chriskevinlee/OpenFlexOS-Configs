@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This script ask the user to set a user selected wallpaper, a random wallpaper or to have a random wallpaper set at a specific interval set by the user
+# Author: Chris Lee, ChatGPT
+# Dependencies: sxiv, zenity, wmctrl, feh
+# Usage:
+# Notes:
+# ================================================================
+
 # Check if the timer is running
 if [[ -f /tmp/wallpaper_timer.pid ]] && pgrep -F /tmp/wallpaper_timer.pid > /dev/null; then
     MENU_OPTION="Stop Random Wallpaper"
