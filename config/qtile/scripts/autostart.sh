@@ -8,14 +8,7 @@
 # Notes:
 # ================================================================
 
-if command -v /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
-        /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
-elif command -v /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
-        /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-fi
-
-flameshot &
-
+# Create a config file if it dont exists, saves the wallpaper the user selected and applies the wallpaper at login
 CONFIG_FILE="/home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper"
 # Check if the configuration file exists and is not empty
 if [ -s "$CONFIG_FILE" ]; then
@@ -31,14 +24,27 @@ elif [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 
+# Loads the login sound and plays a login sound at login
 source /home/$USER/.config/qtile/scripts/sounds.sh
 if [[ ! -z "$login_sound" && $active_sounds = yes ]]; then
     mpv --no-video "${sounds_dir}${login_sound}" &
 fi
 
+
+# Loads a authentication agent to allow applications that need sudo/authentication
+if command -v /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+        /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
+elif command -v /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+        /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+fi
+
+
+# Start Applicatiosn at login
+flameshot &
 xscreensaver -no-splash &
 conky -c ~/.config/qtile/conky/conky.conf &
-
 picom &
 
+
+# Start Scripts at Login
 /home/$USER/.config/qtile/scripts/Battery_Hibernate.sh &
