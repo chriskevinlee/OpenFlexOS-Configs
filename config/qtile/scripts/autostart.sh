@@ -48,3 +48,4 @@ picom &
 
 # Start Scripts at Login
 /home/$USER/.config/qtile/scripts/Battery_Hibernate.sh &
+#/usr/local/bin/wallpaper_changer.sh random 30m
