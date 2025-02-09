@@ -8,10 +8,25 @@
 # Notes:
 # ================================================================
 
-#WALLPAPER_DIRS=("$HOME/.config/wallpapers")
-WALLPAPER_DIR="$HOME/.config/wallpapers"
+# Wallpaper directories (add as many directories as you want here)
+WALLPAPER_DIRS=("$HOME/.config/wallpapers")
+
+# Path to store the process ID of the wallpaper timer
 PID_FILE="/tmp/wallpaper_timer.pid"
 
+# Function to load saved wallpaper directories (if any)
+load_wallpaper_dirs() {
+    if [ -f "$HOME/.wallpaper_dirs" ]; then
+        mapfile -t WALLPAPER_DIRS < "$HOME/.wallpaper_dirs"
+    fi
+}
+
+# Function to save wallpaper directories
+save_wallpaper_dirs() {
+    echo "${WALLPAPER_DIRS[@]}" > "$HOME/.wallpaper_dirs"
+}
+
+# Function to start the random wallpaper changer with a given interval
 start_random_wallpaper() {
     local INTERVAL_INPUT="$1"
 
@@ -31,10 +46,10 @@ start_random_wallpaper() {
 
     stop_random_wallpaper
 
-    # Start the wallpaper changer properly in a background loop
+    # Start the wallpaper changer in a background loop
     (
         while true; do
-            feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
+            feh --bg-fill --randomize $(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
             sleep "$INTERVAL"
         done
     ) > /dev/null 2>&1 &  # Redirect output to avoid clutter
@@ -43,6 +58,7 @@ start_random_wallpaper() {
     echo "Wallpaper timer started with a $INTERVAL_INPUT interval!"
 }
 
+# Function to stop the random wallpaper timer
 stop_random_wallpaper() {
     if [[ -f "$PID_FILE" ]]; then
         kill "$(cat "$PID_FILE")" 2>/dev/null
@@ -53,8 +69,9 @@ stop_random_wallpaper() {
     fi
 }
 
+# Function to select a wallpaper using sxiv
 select_wallpaper() {
-    sxiv -t -r "$WALLPAPER_DIR" &
+    sxiv -t -r "${WALLPAPER_DIRS[@]}" &
     sleep 1
     window_id=$(wmctrl -l | grep "sxiv" | awk '{print $1}')
     if [ -z "$window_id" ]; then
@@ -64,6 +81,18 @@ select_wallpaper() {
     wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
 }
 
+# Function to manually add a new wallpaper directory
+# You can add directories by modifying the array below
+add_wallpaper_directory() {
+    # Example: Add a new directory to the list (just modify the array in the script)
+    WALLPAPER_DIRS+=("/path/to/new/directory")
+    echo "New directory added: /path/to/new/directory"
+    save_wallpaper_dirs
+}
+
+# Load saved wallpaper directories at the start
+load_wallpaper_dirs
+
 # Command-line options
 case "$1" in
     "random")
@@ -72,7 +101,7 @@ case "$1" in
         elif [[ -n "$2" ]]; then
             start_random_wallpaper "$2"
         else
-            feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
+            feh --bg-fill --randomize $(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
         fi
         exit 0
         ;;
@@ -90,7 +119,7 @@ CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" \
 
 case "$CHOICE" in
     "Select Wallpaper") select_wallpaper ;;
-    "Random Wallpaper") feh --bg-fill --randomize $(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \)) ;;
+    "Random Wallpaper") feh --bg-fill --randomize $(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \)) ;;
     "Start Random Wallpaper")
         INTERVAL=$(zenity --list --title="Set Wallpaper Interval" --column="Options" \
             "5m" "10m" "20m" "30m" "60m" "Custom" --text="Choose a time interval:")
