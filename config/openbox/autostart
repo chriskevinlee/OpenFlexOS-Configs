@@ -58,3 +58,4 @@ picom &
 
 # Start Scripts at Login
 /home/$USER/.config/openbox/scripts/Battery_Hibernate.sh &
+#/usr/local/bin/wallpaper_changer.sh random 30m
