@@ -130,7 +130,7 @@ def battery_widget():
     else:
         return widget.TextBox(text="", width=0)
 
-# Function to display start/stop  and to allow left and right click
+# Function to display start/stop for nerd_dictation and to allow left and right click
 class nerd_dictation(TextBox):
     def __init__(self):
         super().__init__(text="nd", foreground="#ace1af")  # Celadon color
@@ -138,8 +138,8 @@ class nerd_dictation(TextBox):
 
         # Add callbacks for mouse clicks
         self.add_callbacks({
-            'Button1': self.on_left_click,
-            'Button3': self.on_right_click 
+            'Button1': self.on_left_click,  # Left click: Increase volume
+            'Button3': self.on_right_click   # Right click: Decrease volume
         })
 
         # Start a background thread to keep updating the widget
@@ -148,7 +148,7 @@ class nerd_dictation(TextBox):
     def start_polling(self):
         def poll():
             while True:
-                self.update_volume()
+                self.update_nerd_dictation()
                 time.sleep(1)  # Adjust interval as needed
 
         thread = threading.Thread(target=poll, daemon=True)
@@ -356,6 +356,8 @@ keys = [
     Key([alt], "q", lazy.spawn(get_script_path("power.sh")), desc="Powermenu"),
     Key([alt], "d", lazy.spawn(get_script_path("applications.sh")), desc="Menu"),
     Key([alt], "f", lazy.spawn("firefox"), desc="Launch Firefox"),
+    Key([mod, alt], "b", lazy.spawn([get_script_path("nerd-dictation.sh"), "start"]), desc="begin/start nerd dictation"),
+    Key([mod, alt], "e", lazy.spawn([get_script_path("nerd-dictation.sh"), "stop"]), desc="end/stop nerd dictation"),
     Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("volume.sh") + " up"), desc="Increase volume"),
     Key([], "XF86AudioLowerVolume", lazy.spawn(get_script_path("volume.sh") + " down"), desc="Decrease volume"),
     Key([], "XF86AudioMute", lazy.spawn(get_script_path("volume.sh") + " mute"), desc="Mute/Unmute"),
