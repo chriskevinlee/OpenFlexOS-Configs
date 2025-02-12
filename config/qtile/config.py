@@ -76,6 +76,7 @@ def init_bar():
             widget.Spacer(length=10),
             BrightnessWidget(),
             VolumeWidget(),
+            nerd_dictation(),
             widget.Spacer(length=10),
             widget.CheckUpdates(
                 distro="Arch",
@@ -128,6 +129,46 @@ def battery_widget():
         )
     else:
         return widget.TextBox(text="", width=0)
+
+# Function to display start/stop  and to allow left and right click
+class nerd_dictation(TextBox):
+    def __init__(self):
+        super().__init__(text="nd", foreground="#ace1af")  # Celadon color
+        self.update_nerd_dictation()
+
+        # Add callbacks for mouse clicks
+        self.add_callbacks({
+            'Button1': self.on_left_click,
+            'Button3': self.on_right_click 
+        })
+
+        # Start a background thread to keep updating the widget
+        self.start_polling()
+
+    def start_polling(self):
+        def poll():
+            while True:
+                self.update_volume()
+                time.sleep(1)  # Adjust interval as needed
+
+        thread = threading.Thread(target=poll, daemon=True)
+        thread.start()
+
+    def update_nerd_dictation(self):
+        result = subprocess.run([get_script_path("nerd-dictation.sh")], capture_output=True, text=True)
+        self.text = result.stdout.strip()
+        self.draw()
+
+    def on_left_click(self):
+        subprocess.run([get_script_path("nerd-dictation.sh"), "start"])
+        self.update_nerd_dictation()
+
+    def on_right_click(self):
+        subprocess.run([get_script_path("nerd-dictation.sh"), "stop"])
+        self.update_nerd_dictation()
+
+# Create the widget instance globally so hooks can reference it
+nerddictation = nerd_dictation()
 
 # Function to display volume percentage and to allow left click, right click and middle click
 class VolumeWidget(TextBox):
@@ -255,21 +296,21 @@ reconfigure_screens = True
 keys = [
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
-    
+
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
     Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
     Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
-    
+
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
     Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
     Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
     Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
-    
+
     # Grow windows. If current window is on the edge of screen and direction
     # will be to screen edge - window would shrink.
     Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
@@ -277,17 +318,17 @@ keys = [
     Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
     Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
-    
+
     # Grow/resize Windows in monadtall
     Key([mod], "i", lazy.layout.grow()),
     Key([mod], "m", lazy.layout.shrink()),
-    
+
     # Grow/shrink/resize in floating mode
     Key([alt], "l", resize_floating_window(width=10), desc="Increase width by 10"),
     Key([alt], "h", resize_floating_window(width=-10), desc="Decrease width by 10"),
     Key([alt], "j", resize_floating_window(height=10), desc="Increase height by 10"),
     Key([alt], "k", resize_floating_window(height=-10), desc="Decrease height by 10"),
-    
+
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
     # Unsplit = 1 window displayed, like Max layout, but still with
@@ -296,21 +337,21 @@ keys = [
         [mod, "shift"], "Return", lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
-    
+
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
-    
+
     Key(
         [mod], "f", lazy.window.toggle_fullscreen(),
         desc="Toggle fullscreen on the focused window",
     ),
-    
+
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
-    
+
     # Start of My Config: setting my own keys
     Key([alt], "q", lazy.spawn(get_script_path("power.sh")), desc="Powermenu"),
     Key([alt], "d", lazy.spawn(get_script_path("applications.sh")), desc="Menu"),
