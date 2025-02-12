@@ -6,17 +6,17 @@ STATE_FILE="$HOME/.config/nerd-dictation-state"
 if [[ -f "$STATE_FILE" ]]; then
     LAST_STATE=$(cat "$STATE_FILE")
 else
-    LAST_STATE="stop"  # Default to "stop"
+    LAST_STATE="Right click to stop dictation"  # Default to "Right click to stop dictation"
 fi
 
 case $1 in
     start )
         nd begin &
-        echo "stop" > "$STATE_FILE"  # Save state
+        echo "Right click to stop dictation" > "$STATE_FILE"  # Save state
         ;;
     stop )
         nd end &
-        echo "start" > "$STATE_FILE"  # Save state
+        echo "Left click to start dictation" > "$STATE_FILE"  # Save state
         ;;
     * )
         # If no argument is given, print the last saved state
