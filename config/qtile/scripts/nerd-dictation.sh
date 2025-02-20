@@ -12,11 +12,11 @@ fi
 case $1 in
     start )
         nd begin --vosk-model-dir /opt/nerd-dictation/model &
-        echo "Right click to stop dictation" > "$STATE_FILE"  # Save state
+        echo "Right-Click: Stop" > "$STATE_FILE"  # Save state
         ;;
     stop )
         nd end &
-        echo "Left click to start dictation" > "$STATE_FILE"  # Save state
+        echo "Left-Click: Dictate" > "$STATE_FILE"  # Save state
         ;;
     * )
         echo "$LAST_STATE"
