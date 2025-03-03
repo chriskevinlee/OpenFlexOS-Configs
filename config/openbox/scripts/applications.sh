@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: Use rofi or dmenu as a wifi menu
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi, dmenu, NerdFontsSymbolsOnly(https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip)
+# Usage: Add to a panel or bar or run./rofi-wifi-menu.sh
+# Notes:
+# ================================================================
+
 #launcher=rofi
 launcher=dmenu
 

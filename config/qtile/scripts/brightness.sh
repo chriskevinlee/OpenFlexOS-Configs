@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This Script uses brightnessctl and dunst to control screen brightness and send a notifcation on compatiable devices
+# Author: Chris Lee, ChatGPT
+# Dependencies: brightnessctl, dunst
+# Usage: add to a startup script(Recommened) or ./Battery_Hibernate.sh from terminal(Not Recommened)
+# Notes:
+# ================================================================
+
 # Define step percentage
 STEP=10%
 

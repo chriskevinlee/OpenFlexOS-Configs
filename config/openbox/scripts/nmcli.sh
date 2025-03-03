@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This Script shows if you are connected to ethernet, wifi or not connected
+# Author: Chris Lee, ChatGPT
+# Dependencies: network-manager, dunstify
+# Usage: add to a startup script(Recommened) or ./Battery_Hibernate.sh from terminal(Not Recommened)
+# Notes:
+# ================================================================
+
 # Paths
 state_file="/tmp/prev_network_state"
 
@@ -13,16 +21,16 @@ connected_ssid=$(nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d':' -f2)
 # Determine current state and icon path
 if [[ $check_ethernet_wifi = "ethernet wifi" ]]; then
     current_state="ethernet_wifi"
-    icon_path="/home/chris/.config/openbox/png_icons/personal-computer.png"
+    icon_path="/home/$USER/.config/openbox/png_icons/personal-computer.png"
 elif [[ $check_wifi = "wifi" ]]; then
     current_state="wifi"
-    icon_path="/home/chris/.config/openbox/png_icons/wifi.png"
+    icon_path="/home/$USER/.config/openbox/png_icons/wifi.png"
 elif [[ $check_ethernet = "ethernet" ]]; then
     current_state="ethernet"
-    icon_path="/home/chris/.config/openbox/png_icons/computer.png"
+    icon_path="/home/$USER/.config/openbox/png_icons/computer.png"
 else
     current_state="disconnected"
-    icon_path="/home/chris/.config/openbox/png_icons/cancel.png"
+    icon_path="/home/$USER/.config/openbox/png_icons/cancel.png"
 fi
 
 # Check previous state

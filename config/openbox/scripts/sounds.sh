@@ -1,3 +1,13 @@
+#!/bin/bash
+
+# ================================================================
+# Description: This Script allows you to set login, lock, logout, reboot, suspend, hibernate and power off sounds
+# Author: Chris Lee
+# Dependencies:
+# Usage: add to autostart file
+# Notes:
+# ================================================================
+
 active_sounds=yes
 sounds_dir="$HOME/.config/openbox/sounds/"
 

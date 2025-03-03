@@ -1,19 +1,18 @@
 #!/bin/bash
 
+# ================================================================
+# Description: Use rofi or dmenu as a wifi menu
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi, dmenu, NerdFontsSymbolsOnly(https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip)
+# Usage: Add to a panel or bar or run./rofi-wifi-menu.sh
+# Notes:
+# ================================================================
+
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
 launcher="dmenu -i"
 
 main_message=$(echo -e "WiFi Manager:\nWhat would you like to do?")
 main_menu=$(echo -e "󱚽 Connect to a Wifi Network\n󰖪 Enable Or Disable Wifi\n󱛅 Forget a Wifi Network" | $launcher -p "$main_message")
-
-
-
-
-
-
-
-
-
 
 if [[ $main_menu = "󱚽 Connect to a Wifi Network" ]]; then
     # List all available Wi-Fi networks and mark the active one

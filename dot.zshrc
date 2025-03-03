@@ -4,7 +4,7 @@ HISTSIZE=1000
 SAVEHIST=1000
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/home/chrislee/.zshrc'
+zstyle :compinstall filename '/home/$USER/.zshrc'
 
 autoload -Uz compinit
 compinit
@@ -45,37 +45,36 @@ bindkey '^[[3~' delete-char
 source /usr/share/zsh/plugins/zsh-sudo/sudo.plugin.zsh
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-alias cat='bat -p'
-
 alias du='du -h'
-
 alias df='df -h'
-
-alias pacs='sudo pacman -Sy'
-
-alias pacu='sudo pacman -Syu'
-
-alias paci='sudo pacman -S'
-
+alias free='free -h'
 alias ls='lsd'
+alias C='clear'
+alias n='nano'
+alias v='vim'
+alias s='sudo'
+
+vim() {
+    if [ "$1" = "-n" ]; then
+        shift
+        command vim +"set number" "$@"
+    else
+        command vim "$@"
+    fi
+}
+
+if command -v apt >> /dev/null; then
+    alias a='apt'
+fi
+
+if command -v pacman >> /dev/null; then
+    alias pm='pacman'
+fi
 
 
-
-
-
-
-
-
-
+batcat=$(command -v batcat)
+if [ -n "$batcat" ]; then
+        alias cat='batcat -p'
+else
+        alias cat='bat -p'
+fi

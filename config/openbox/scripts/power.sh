@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: Power Menu using Rofi or dmenu
+# Author: Chris Lee, ChatGPT
+# Dependencies: rofi,dmenu
+# Usage: Add to a panel or bar or run./power.sh
+# Notes:
+# ================================================================
+
 source /home/$USER/.config/openbox/scripts/sounds.sh
 
 #launcher="rofi -config /home/$USER/.config/openbox/rofi/config.rasi -dmenu"
@@ -41,7 +49,7 @@ case "$chosen" in
             [no]* ) exit;;
             [yes]* )
                 if [[ "$active_sounds" = yes && ! -z "$reboot_sound" && -f "${sounds_dir}${reboot_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${reboot_sound}" && reboot
+                    mpv --no-video "${sounds_dir}${reboot_sound}" && systemctl reboot
                 else
                     reboot
                 fi
@@ -80,7 +88,7 @@ case "$chosen" in
             [no]* ) exit;;
             [yes]* )
                 if [[ "$active_sounds" = yes && ! -z "$poweroff_sound" && -f "${sounds_dir}${poweroff_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${poweroff_sound}" && poweroff
+                    mpv --no-video "${sounds_dir}${poweroff_sound}" && systemctl poweroff
                 else
                     poweroff
                 fi

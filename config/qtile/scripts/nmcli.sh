@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This Script shows if you are connected to ethernet, wifi or not connected
+# Author: Chris Lee, ChatGPT
+# Dependencies: network-manager, dunstify NerdFontsSymbolsOnly(https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip)
+# Usage: add to a startup script(Recommened) or ./Battery_Hibernate.sh from terminal(Not Recommened)
+# Notes:
+# ================================================================
+
 # Paths
 state_file="/tmp/prev_network_state"
 

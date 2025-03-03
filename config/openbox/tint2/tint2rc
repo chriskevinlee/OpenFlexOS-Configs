@@ -58,7 +58,7 @@ border_color_pressed = #000000 100
 
 #-------------------------------------
 # Panel
-panel_items = ELTSEEECEEE
+panel_items = ELTSEEEECEEE
 panel_size = 100% 35
 panel_margin = 0 0
 #panel_padding = 2 0 2
@@ -147,7 +147,7 @@ launcher_icon_theme_override = 0
 startup_notifications = 1
 launcher_tooltip = 1
 launcher_item_app = firefox.desktop
-launcher_item_app = nitrogen.desktop
+launcher_item_app = firefox-esr.desktop
 launcher_item_app = Alacritty.desktop
 launcher_item_app =
 #-------------------------------------
@@ -216,6 +216,18 @@ execp_icon_w = 30
 execp_icon_h =30
 execp_interval = 1
 
+# Nerd Dictation
+execp = new
+execp_command = /home/$USER/.config/openbox/scripts/nerd-dictation.sh
+execp_font_color = #ffffff
+execp_has_icon = 0
+execp_interval = 1
+execp_icon_w = 30
+execp_icon_h =30
+execp_lclick_command = /home/$USER/.config/openbox/scripts/nerd-dictation.sh start
+execp_rclick_command = /home/$USER/.config/openbox/scripts/nerd-dictation.sh stop
+execp_font = 18
+
 # Volume
 execp = new
 execp_command = echo /home/$USER/.config/openbox/png_icons/volume.png; /home/$USER/.config/openbox/scripts/volume.sh
@@ -226,6 +238,7 @@ execp_icon_w = 30
 execp_icon_h =30
 execp_lclick_command = /home/$USER/.config/openbox/scripts/volume.sh up
 execp_rclick_command = /home/$USER/.config/openbox/scripts/volume.sh down
+execp_mclick_command = /home/$USER/.config/openbox/scripts/volume.sh mute
 execp_font = 18
 
 # Battery
@@ -266,4 +279,3 @@ execp_has_icon = 1
 execp_icon_w = 30
 execp_icon_h =30
 execp_interval = 0
-

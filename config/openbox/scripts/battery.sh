@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# ================================================================
+# Description: This script is used for openbox to display the charging status
+# Author: Chris Lee
+# Dependencies:
+# Usage:
+# Notes:
+# ================================================================
+
 # Check if BAT1 exists
 if [ -d "/sys/class/power_supply/BAT1" ]; then
     # Get battery status and percentage
