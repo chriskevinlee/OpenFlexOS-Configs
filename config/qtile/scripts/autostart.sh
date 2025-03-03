@@ -25,8 +25,8 @@ fi
 
 
 # Loads the login sound and plays a login sound at login
-source /home/$USER/.config/qtile/scripts/sounds.sh
-if [[ ! -z "$login_sound" && $active_sounds = yes ]]; then
+source /home/$USER/.config/openbox/scripts/sounds.sh
+if [[ ! -z "$login_sound" ]]; then
     mpv --no-video "${sounds_dir}${login_sound}" &
 fi
 
