@@ -22,7 +22,7 @@ hibernate_sound="lovelyboot1-103697.mp3"
 poweroff_sound="retro-audio-logo-94648.mp3"
 
 # Use yes or no to enable or disable countdown
-enable_countdown=no
+enable_countdown=yes
 
 # Set the number of seconds before the action happens
 countdown=10
