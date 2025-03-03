@@ -1,19 +1,47 @@
 #!/bin/bash
 
-# ================================================================
-# Description: Power Menu using Rofi or dmenu
-# Author: Chris Lee, ChatGPT
-# Dependencies: rofi,dmenu, NerdFontsSymbolsOnly(https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip)
-# Usage: Add to a panel or bar or run./power.sh
-# Notes:
-# ================================================================
-
-source /home/$USER/.config/qtile/scripts/sounds.sh
-
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
 launcher="dmenu -i"
 
+active_sounds=yes
+sounds_dir="$HOME/.config/qtile/sounds/"
+
+login_sound="game-bonus-144751.mp3"
+lock_sound="ambient-piano-logo-165357.mp3"
+logout_sound="marimba-win-f-2-209688.mp3"
+reboot_sound="introduction-sound-201413.mp3"
+suspend_sound="cozy-weaves-soft-logo-176378.mp3"
+hibernate_sound="lovelyboot1-103697.mp3"
+poweroff_sound="retro-audio-logo-94648.mp3"
+
+# Use yes or no to enable or disable countdown
+enable_countdown=no
+
+# Set the number of seconds before the action happens
+countdown=10
+
 chosen=$(printf " Lock\n󰍃 Logout\n󰜉 Reboot\n Suspend\n Hibernate\n⏻ PowerOff\n" | $launcher -p "Power")
+
+countdown_timer() {
+        if [[ "$enable_countdown" != "yes" ]]; then
+        return 0  # Skip countdown if disabled
+        fi
+    # Create a zenity countdown window with a "Cancel" button
+    (
+    for ((i = countdown; i > 0; i--)); do
+        echo "# $chosen in: $i"
+        sleep 1
+    done
+
+    ) | zenity --progress --title="$chosen" --text="$chosen will occur in 10 seconds" --percentage=0 --auto-close --width=300
+
+    # Check if zenity was canceled by inspecting the exit status
+    if [ $? -eq 1 ]; then
+        zenity --info --text="$chosen canceled." --title="$chosen"
+        return 1
+    fi
+    return 0
+}
 
 case "$chosen" in
     " Lock")
@@ -21,10 +49,14 @@ case "$chosen" in
         case $yes_no in
             [no]* ) exit;;
             [yes]* )
-                if [[ "$active_sounds" = yes && ! -z "$lock_sound" && -f "${sounds_dir}${lock_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${lock_sound}" && xscreensaver-command -lock
+                if countdown_timer; then
+                    if [[ "$active_sounds" = yes && ! -z "$lock_sound" && -f "${sounds_dir}${lock_sound}" ]]; then
+                        mpv --no-video "${sounds_dir}${lock_sound}" && xscreensaver-command -lock
+                    else
+                        xscreensaver-command -lock
+                    fi
                 else
-                    xscreensaver-command -lock
+                    exit
                 fi
                 ;;
         esac
@@ -34,11 +66,14 @@ case "$chosen" in
         case $yes_no in
             [no]* ) exit;;
             [yes]* )
-                if [[ "$active_sounds" = yes && ! -z "$logout_sound" && -f "${sounds_dir}${logout_sound}" ]]; then
-			mpv --no-video "${sounds_dir}${logout_sound}" && qtile cmd-obj -o cmd -f shutdown
+                if countdown_timer; then
+                    if [[ "$active_sounds" = yes && ! -z "$logout_sound" && -f "${sounds_dir}${logout_sound}" ]]; then
+                        mpv --no-video "${sounds_dir}${logout_sound}" && qtile cmd-obj -o cmd -f shutdown
+                    else
+                        qtile cmd-obj -o cmd -f shutdown
+                    fi
                 else
-                    qtile cmd-obj -o cmd -f shutdown
-                    
+                    exit
                 fi
                 ;;
         esac
@@ -48,10 +83,14 @@ case "$chosen" in
         case $yes_no in
             [no]* ) exit;;
             [yes]* )
-                if [[ "$active_sounds" = yes && ! -z "$reboot_sound" && -f "${sounds_dir}${reboot_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${reboot_sound}" && systemctl reboot
+                if countdown_timer; then
+                    if [[ "$active_sounds" = yes && ! -z "$reboot_sound" && -f "${sounds_dir}${reboot_sound}" ]]; then
+                        mpv --no-video "${sounds_dir}${reboot_sound}" && reboot
+                    else
+                        reboot
+                    fi
                 else
-                    reboot
+                    exit
                 fi
                 ;;
         esac
@@ -61,10 +100,14 @@ case "$chosen" in
         case $yes_no in
             [no]* ) exit;;
             [yes]* )
-                if [[ "$active_sounds" = yes && ! -z "$suspend_sound" && -f "${sounds_dir}${suspend_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${suspend_sound}" && systemctl suspend
+                if countdown_timer; then
+                    if [[ "$active_sounds" = yes && ! -z "$suspend_sound" && -f "${sounds_dir}${suspend_sound}" ]]; then
+                        mpv --no-video "${sounds_dir}${suspend_sound}" && systemctl suspend
+                    else
+                        systemctl suspend
+                    fi
                 else
-                    systemctl suspend
+                    exit
                 fi
                 ;;
         esac
@@ -74,10 +117,14 @@ case "$chosen" in
         case $yes_no in
             [no]* ) exit;;
             [yes]* )
-                if [[ "$active_sounds" = yes && ! -z "$hibernate_sound" && -f "${sounds_dir}${hibernate_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${hibernate_sound}" && systemctl hibernate
+                if countdown_timer; then
+                    if [[ "$active_sounds" = yes && ! -z "$hibernate_sound" && -f "${sounds_dir}${hibernate_sound}" ]]; then
+                        mpv --no-video "${sounds_dir}${hibernate_sound}" && systemctl hibernate
+                    else
+                        systemctl hibernate
+                    fi
                 else
-                    systemctl hibernate
+                    exit
                 fi
                 ;;
         esac
@@ -87,10 +134,14 @@ case "$chosen" in
         case $yes_no in
             [no]* ) exit;;
             [yes]* )
-                if [[ "$active_sounds" = yes && ! -z "$poweroff_sound" && -f "${sounds_dir}${poweroff_sound}" ]]; then
-                    mpv --no-video "${sounds_dir}${poweroff_sound}" && systemctl poweroff
+                if countdown_timer; then
+                    if [[ "$active_sounds" = yes && ! -z "$poweroff_sound" && -f "${sounds_dir}${poweroff_sound}" ]]; then
+                        mpv --no-video "${sounds_dir}${poweroff_sound}" && poweroff
+                    else
+                        poweroff
+                    fi
                 else
-                    poweroff
+                    exit
                 fi
                 ;;
         esac
