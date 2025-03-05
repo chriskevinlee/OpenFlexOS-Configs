@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /home/$USER/.config/qtile/scripts/sounds.sh
+
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
 launcher="dmenu -i"
 
