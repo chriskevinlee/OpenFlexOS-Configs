@@ -48,4 +48,7 @@ picom &
 
 # Start Scripts at Login
 /home/$USER/.config/qtile/scripts/Battery_Hibernate.sh &
+# Set wallpaper every 30 minutes
 #/usr/local/bin/wallpaper_changer.sh random 30m
+# Set wallpaper at login
+#/usr/local/bin/wallpaper_changer.sh random
