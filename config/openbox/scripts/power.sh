@@ -8,6 +8,8 @@
 # Notes:
 # ================================================================
 
+source /home/$USER/.config/openbox/scripts/sounds.sh
+
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
 launcher="dmenu -i"
 
