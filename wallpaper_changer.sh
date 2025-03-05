@@ -1,32 +1,42 @@
 #!/bin/bash
 
 # ================================================================
-# Description: This script ask the user to set a user selected wallpaper, a random wallpaper or to have a random wallpaper set at a specific interval set by the user
+# Description: This script asks the user to set a user-selected wallpaper,
+# a random wallpaper, or to have a random wallpaper set at a specific interval.
 # Author: Chris Lee, ChatGPT
 # Dependencies: sxiv, zenity, wmctrl, feh
-# Usage: ./wallpaper_changer.sh or ./wallpaper_changer.sh select or ./wallpaper_changer.sh random or ./wallpaper_changer.sh stop or ./wallpaper_changer.sh random [30s,10m] seconds/minutes
-# Notes:
 # ================================================================
 
-# Wallpaper directories (add as many directories as you want here)
+# Wallpaper directories
 WALLPAPER_DIRS=("$HOME/.config/wallpapers")
 
 # Path to store the process ID of the wallpaper timer
 PID_FILE="/tmp/wallpaper_timer.pid"
 
-# Function to load saved wallpaper directories (if any)
-load_wallpaper_dirs() {
-    if [ -f "$HOME/.wallpaper_dirs" ]; then
-        mapfile -t WALLPAPER_DIRS < "$HOME/.wallpaper_dirs"
+# Function to determine environment
+get_env() {
+    if [[ "$XDG_CURRENT_DESKTOP" == "Qtile" ]] || [[ "$DESKTOP_SESSION" == "qtile" ]]; then
+        echo "qtile"
+    elif [[ "$XDG_CURRENT_DESKTOP" == "Openbox" ]] || [[ "$DESKTOP_SESSION" == "openbox" ]]; then
+        echo "openbox"
+    else
+        echo "unknown"
     fi
 }
 
-# Function to save wallpaper directories
-save_wallpaper_dirs() {
-    echo "${WALLPAPER_DIRS[@]}" > "$HOME/.wallpaper_dirs"
+# Function to save the wallpaper path
+save_wallpaper() {
+    local WALLPAPER="$1"
+    ENVIRONMENT=$(get_env)
+
+    if [[ "$ENVIRONMENT" == "qtile" ]]; then
+        echo "$WALLPAPER" > "$HOME/.config/qtile/.selected_wallpaper"
+    elif [[ "$ENVIRONMENT" == "openbox" ]]; then
+        echo "$WALLPAPER" > "$HOME/.config/openbox/.selected_wallpaper"
+    fi
 }
 
-# Function to start the random wallpaper changer with a given interval
+# Function to start random wallpaper changer
 start_random_wallpaper() {
     local INTERVAL_INPUT="$1"
 
@@ -49,10 +59,12 @@ start_random_wallpaper() {
     # Start the wallpaper changer in a background loop
     (
         while true; do
-            feh --bg-fill --randomize $(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
+            WALLPAPER=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | shuf -n 1)
+            feh --bg-fill "$WALLPAPER"
+            save_wallpaper "$WALLPAPER"
             sleep "$INTERVAL"
         done
-    ) > /dev/null 2>&1 &  # Redirect output to avoid clutter
+    ) > /dev/null 2>&1 &
 
     echo $! > "$PID_FILE"
     echo "Wallpaper timer started with a $INTERVAL_INPUT interval!"
@@ -81,18 +93,6 @@ select_wallpaper() {
     wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
 }
 
-# Function to manually add a new wallpaper directory
-# You can add directories by modifying the array below
-add_wallpaper_directory() {
-    # Example: Add a new directory to the list (just modify the array in the script)
-    WALLPAPER_DIRS+=("/path/to/new/directory")
-    echo "New directory added: /path/to/new/directory"
-    save_wallpaper_dirs
-}
-
-# Load saved wallpaper directories at the start
-load_wallpaper_dirs
-
 # Command-line options
 case "$1" in
     "random")
@@ -101,7 +101,9 @@ case "$1" in
         elif [[ -n "$2" ]]; then
             start_random_wallpaper "$2"
         else
-            feh --bg-fill --randomize $(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \))
+            WALLPAPER=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | shuf -n 1)
+            feh --bg-fill "$WALLPAPER"
+            save_wallpaper "$WALLPAPER"
         fi
         exit 0
         ;;
@@ -119,7 +121,11 @@ CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" \
 
 case "$CHOICE" in
     "Select Wallpaper") select_wallpaper ;;
-    "Random Wallpaper") feh --bg-fill --randomize $(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \)) ;;
+    "Random Wallpaper")
+        WALLPAPER=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | shuf -n 1)
+        feh --bg-fill "$WALLPAPER"
+        save_wallpaper "$WALLPAPER"
+        ;;
     "Start Random Wallpaper")
         INTERVAL=$(zenity --list --title="Set Wallpaper Interval" --column="Options" \
             "5m" "10m" "20m" "30m" "60m" "Custom" --text="Choose a time interval:")
