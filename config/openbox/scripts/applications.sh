@@ -8,8 +8,8 @@
 # Notes:
 # ================================================================
 
-#launcher=rofi
-launcher=dmenu
+launcher=rofi
+#launcher=dmenu
 
 if [ $launcher = rofi ]; then
 	rofi rofi -config /home/$USER/.config/openbox/rofi/config.rasi -show drun -display-drun "Apps "
