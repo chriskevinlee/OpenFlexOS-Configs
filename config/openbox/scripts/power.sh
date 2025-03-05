@@ -65,9 +65,9 @@ case "$chosen" in
             [yes]* )
                 if countdown_timer; then
                     if [[ "$active_sounds" = yes && ! -z "$logout_sound" && -f "${sounds_dir}${logout_sound}" ]]; then
-                        mpv --no-video "${sounds_dir}${logout_sound}" && qtile cmd-obj -o cmd -f shutdown
+                        mpv --no-video "${sounds_dir}${logout_sound}" && openbox --exit
                     else
-                        qtile cmd-obj -o cmd -f shutdown
+                        openbox --exit
                     fi
                 else
                     exit
