@@ -7,43 +7,6 @@
 # Dependencies: sxiv, zenity, wmctrl, feh, dunst
 # ================================================================
 
-# Check to make sure dependencies are installed before running script
-    dependencies=("sxiv" "zenity" "wmctrl" "feh" "dunst")
-    missing=()
-
-    # Check for missing dependencies
-    for i in "${dependencies[@]}"; do
-        if ! command -v "$i" &>/dev/null; then
-            missing+=("$i")
-        fi
-    done
-
-    # Only launch alacritty if there are missing dependencies
-    if [[ ${#missing[@]} -gt 0 ]]; then
-        alacritty -e bash -c '
-        dependencies=("sxiv" "zenity" "wmctrl" "feh" "dunst")
-        missing=()
-
-        for i in "${dependencies[@]}"; do
-            if ! command -v "$i" &>/dev/null; then
-                missing+=("$i")
-            fi
-        done
-
-        echo "The following packages are required but not installed:"
-        echo "${missing[@]}"
-
-        read -p "Would you like to install them now? (y/n) " yn
-        if [[ $yn =~ ^[Yy]$ ]]; then
-            sudo pacman --noconfirm -S "${missing[@]}"
-        else
-            echo "Please install them manually."
-        fi
-        echo "Press Enter to close..."
-        read
-        '
-    fi
-
 # Array of paths to wallpapers. Use "" around paths eg. "$HOME/Pictures"
     WALLPAPER_DIRS=("$HOME/.config/wallpapers")
 # Create a temporary file for cycling wallpapers
