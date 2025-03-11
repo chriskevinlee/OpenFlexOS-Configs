@@ -69,6 +69,34 @@
             echo "No wallpaper timer is running."
         fi
     }
+# Function: Full Screen slideshow
+    Slide_Show() {
+        local INTERVAL_INPUT="$1"
+
+        if [[ "$INTERVAL_INPUT" =~ ^([0-9]+)([smSM])$ ]]; then
+            VALUE="${BASH_REMATCH[1]}"
+            UNIT="${BASH_REMATCH[2]}"
+
+            if [[ "$UNIT" =~ [mM] ]]; then
+                INTERVAL=$((VALUE * 60))  # Convert minutes to seconds
+            else
+                INTERVAL=$VALUE  # Use seconds directly
+            fi
+        else
+            echo "Invalid format. Use a number followed by 's' (seconds) or 'm' (minutes)."
+            exit 1
+        fi
+
+        # Find only image files and pass them to feh
+        IMAGE_FILES=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.bmp" \))
+        
+        if [[ -z "$IMAGE_FILES" ]]; then
+            echo "No images found in ${WALLPAPER_DIRS[@]}"
+            exit 1
+        fi
+
+        feh -F -D "$INTERVAL" $IMAGE_FILES
+    }
 
 # Checks if the /tmp/wallpaper_timer.pid file exists and if the process ID inside is running.
 # If both conditions are met, it sets MENU_OPTION to "Stop Wallpaper Cycle"; otherwise, it sets it to "Start Wallpaper Cycle".
@@ -76,8 +104,8 @@
 
 # Commandline Options
     if [[ -n "$1" ]]; then 
-        if [[ ! $1 = select ]] && [[ ! $1 = random ]] && [[ ! $1 = cycle ]]; then
-            echo "Invalid Input: Please use $0 select|random|cycle"
+        if [[ ! $1 = select ]] && [[ ! $1 = random ]] && [[ ! $1 = cycle ]] && [[ ! $1 = slideshow ]]; then
+            echo "Invalid Input: Please use $0 select|random|cycle|slideshow"
             exit 1
         fi
         case "$1" in
@@ -110,11 +138,28 @@
                         ;;
                 esac
                 ;;
+            slideshow)
+                case "$1" in
+                    slideshow)
+                        if [[ "$2" =~ ^[0-9]+[smSM]$ ]]; then
+                            Slide_Show "$2"
+                            exit 0
+                        else
+                            echo "Invalid Input: Please use $0 slideshow <interval> (e.g., 30s, 5m)"
+                            exit 1
+                        fi
+                        ;;
+                    *)
+                        echo "Invalid Input: Please use $0 slideshow {<interval>}"
+                        exit 1
+                        ;;
+                esac
+                ;;
         esac
     fi
 
 # GUI Menu using zenity
-    CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" "Select Wallpaper" "Select Random Wallpaper" "$MENU_OPTION")
+    CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" "Select Wallpaper" "Select Random Wallpaper" "$MENU_OPTION" "SlideShow")
     case "$CHOICE" in
         "Select Wallpaper")
             Select_Wallpaper
@@ -134,6 +179,14 @@
         "Stop Wallpaper Cycle")
             Stop_Wallpaper_Cycle
             dunstify -u normal "Wallpaper Cycle Stopped"
+        ;;
+        "SlideShow")
+            INTERVAL=$(zenity --list --title="Set Wallpaper Interval" --column="Options" \
+                "5s" "10s" "20s" "30s" "60m" "Custom" --text="Choose a time interval:")
+            [[ "$INTERVAL" == "Custom" ]] && INTERVAL=$(zenity --entry --title="Custom Interval" --text="Enter time (e.g., 30s, 10m):")
+            [[ ! "$INTERVAL" =~ ^[0-9]+[smSM]$ ]] && { zenity --error --text="Invalid input."; exit 1; }
+            Slide_Show "$INTERVAL"
+            #dunstify -u normal "SlideShow Started"
         ;;
         *) echo "No selection made.";;
     esac
