@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /home/$USER/.config/qtile/scripts/sounds.sh
+source /home/$USER/.config/qtile/scripts/OpenFlexOS_Sounds.sh
 
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
 launcher="dmenu -i"

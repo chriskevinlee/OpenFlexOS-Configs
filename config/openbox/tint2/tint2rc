@@ -202,15 +202,15 @@ execp_has_icon = 1
 execp_interval = 0
 execp_icon_w = 30
 execp_icon_h =30
-execp_lclick_command = /home/$USER/.config/openbox/scripts/applications.sh
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Applications.sh
 
 # Brightness Control
 execp = new
-execp_command = if ls /sys/class/backlight > /dev/null 2>&1 && command -v brightnessctl > /dev/null 2>&1; then echo /home/$USER/.config/openbox/png_icons/brightness.png; fi; /home/$USER/.config/openbox/scripts/brightness.sh
+execp_command = if ls /sys/class/backlight > /dev/null 2>&1 && command -v brightnessctl > /dev/null 2>&1; then echo /home/$USER/.config/openbox/png_icons/brightness.png; fi; /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh 
 execp_font_color = #ffffff
 execp_font = 18
-execp_lclick_command = /home/$USER/.config/openbox/scripts/brightness.sh up
-execp_rclick_command = /home/$USER/.config/openbox/scripts/brightness.sh down
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh  up
+execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh  down
 execp_has_icon = 1
 execp_icon_w = 30
 execp_icon_h =30
@@ -218,32 +218,32 @@ execp_interval = 1
 
 # Nerd Dictation
 execp = new
-execp_command = /home/$USER/.config/openbox/scripts/nerd-dictation.sh
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_NerdDictation.sh
 execp_font_color = #ffffff
 execp_has_icon = 0
 execp_interval = 1
 execp_icon_w = 30
 execp_icon_h =30
-execp_lclick_command = /home/$USER/.config/openbox/scripts/nerd-dictation.sh start
-execp_rclick_command = /home/$USER/.config/openbox/scripts/nerd-dictation.sh stop
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_NerdDictation.sh start
+execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_NerdDictation.sh stop
 execp_font = 18
 
 # Volume
 execp = new
-execp_command = echo /home/$USER/.config/openbox/png_icons/volume.png; /home/$USER/.config/openbox/scripts/volume.sh
+execp_command = echo /home/$USER/.config/openbox/png_icons/volume.png; /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh
 execp_font_color = #ffffff
 execp_has_icon = 1
 execp_interval = 1
 execp_icon_w = 30
 execp_icon_h =30
-execp_lclick_command = /home/$USER/.config/openbox/scripts/volume.sh up
-execp_rclick_command = /home/$USER/.config/openbox/scripts/volume.sh down
-execp_mclick_command = /home/$USER/.config/openbox/scripts/volume.sh mute
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh up
+execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh down
+execp_mclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh mute
 execp_font = 18
 
 # Battery
 execp = new
-execp_command = /home/$USER/.config/openbox/scripts/battery.sh
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Battery.sh 
 execp_has_icon = 1
 execp_icon_w = 30
 execp_icon_h = 30
@@ -253,8 +253,8 @@ execp_interval = 1
 
 # Rofi Network Icon and WFI Menu
 execp = new
-execp_command = /home/$USER/.config/openbox/scripts/nmcli.sh
-execp_lclick_command = /home/$USER/.config/openbox/scripts/rofi-wifi-menu.sh
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_NetworkManagerCLI.sh
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_WifiMenu.sh
 execp_has_icon = 1
 execp_icon_w = 30
 execp_icon_h = 30
@@ -264,7 +264,7 @@ execp_font_color = #ffffff
 # Rofi SSH Menu
 execp = new
 execp_command = echo /home/$USER/.config/openbox/png_icons/ssh.png
-execp_lclick_command = /home/$USER/.config/openbox/scripts/ssh.sh
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_SSH.sh
 execp_has_icon = 1
 execp_icon_w = 30
 execp_icon_h =30
@@ -273,7 +273,7 @@ execp_interval = 1
 #Rofi Power Menu
 execp = new
 execp_command = echo /home/$USER/.config/openbox/png_icons/power-on.png
-execp_lclick_command = /home/$USER/.config/openbox/scripts/power.sh
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Power.sh
 execp_font_color = #ffffff
 execp_has_icon = 1
 execp_icon_w = 30

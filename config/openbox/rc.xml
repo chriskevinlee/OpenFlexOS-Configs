@@ -188,22 +188,22 @@
 
 <keybind key="XF86AudioRaiseVolume">
     <action name="Execute">
-        <command>~/.config/openbox/scripts/volume.sh up</command>
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh up</command>
     </action>
 </keybind>
 <keybind key="XF86AudioLowerVolume">
     <action name="Execute">
-        <command>~/.config/openbox/scripts/volume.sh down</command>
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh down</command>
     </action>
 </keybind>
 <keybind key="XF86AudioMute">
     <action name="Execute">
-        <command>~/.config/openbox/scripts/volume.sh mute</command>
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh mute</command>
     </action>
 </keybind>
 <keybind key="XF86AudioPlay">
     <action name="Execute">
-        <command>~/.config/openbox/scripts/volume.sh play</command>
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh play</command>
     </action>
 </keybind>
 <keybind key="XF86AudioNext">

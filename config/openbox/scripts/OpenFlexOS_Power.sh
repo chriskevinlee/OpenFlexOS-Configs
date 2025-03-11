@@ -8,7 +8,7 @@
 # Notes:
 # ================================================================
 
-source /home/$USER/.config/openbox/scripts/sounds.sh
+source /home/$USER/.config/openbox/scripts/OpenFlexOS_Sounds.sh
 
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
 launcher="dmenu -i"

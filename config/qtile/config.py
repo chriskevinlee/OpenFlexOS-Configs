@@ -19,7 +19,7 @@ from libqtile.widget import TextBox
 # Function to auto-start applicaions/proesses at login
 @hook.subscribe.startup_once
 def autostart():
-    script = get_script_path('autostart.sh')
+    script = get_script_path('OpenFlexOS_AutoStart.sh')
     subprocess.Popen([script])
 
 # Function for qtile bar
@@ -29,7 +29,7 @@ def init_bar():
             widget.TextBox(
                 text=" ",
                 foreground='#00ffff',  # Aqua
-                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("applications.sh"))}
+                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))}
             ),
             widget.Spacer(length=10),
             widget.Clock(
@@ -94,7 +94,7 @@ def init_bar():
             widget.TextBox(
                 text="⏻ ",
                 foreground='#00ff7f',  # SpringGreen1
-                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("power.sh"))},
+                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh"))},
             ),
         ],
         24,  # Bar size (height in pixels)
@@ -155,16 +155,16 @@ class nerd_dictation(TextBox):
         thread.start()
 
     def update_nerd_dictation(self):
-        result = subprocess.run([get_script_path("nerd-dictation.sh")], capture_output=True, text=True)
+        result = subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh")], capture_output=True, text=True)
         self.text = result.stdout.strip()
         self.draw()
 
     def on_left_click(self):
-        subprocess.run([get_script_path("nerd-dictation.sh"), "start"])
+        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "start"])
         self.update_nerd_dictation()
 
     def on_right_click(self):
-        subprocess.run([get_script_path("nerd-dictation.sh"), "stop"])
+        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "stop"])
         self.update_nerd_dictation()
 
 # Create the widget instance globally so hooks can reference it
@@ -198,20 +198,20 @@ class VolumeWidget(TextBox):
 
     def update_volume(self):
         """Fetch volume level and update the widget text."""
-        result = subprocess.run([get_script_path("volume.sh")], capture_output=True, text=True)
+        result = subprocess.run([get_script_path("OpenFlexOS_Volume.sh")], capture_output=True, text=True)
         self.text = result.stdout.strip()
         self.draw()
 
     def on_left_click(self):
-        subprocess.run([get_script_path("volume.sh"), "up"])
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "up"])
         self.update_volume()
 
     def on_right_click(self):
-        subprocess.run([get_script_path("volume.sh"), "down"])
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "down"])
         self.update_volume()
 
     def on_middle_click(self):
-        subprocess.run([get_script_path("volume.sh"), "mute"])
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "mute"])
         self.update_volume()
 
 # Create the widget instance globally so hooks can reference it
@@ -232,23 +232,23 @@ class BrightnessWidget(TextBox):
         self.add_callbacks({'Button1': self.on_left_click, 'Button3': self.on_right_click})
 
     def brightness(self):
-        # Run your brightness.sh script to get the volume level or mute state
-        result = subprocess.run([get_script_path("brightness.sh")], capture_output=True, text=True)
+        # Run your OpenFlexOS_Brightness.sh script to get the volume level or mute state
+        result = subprocess.run([get_script_path("OpenFlexOS_Brightness.sh")], capture_output=True, text=True)
         self.text = result.stdout.strip()
         self.draw()
 
     def on_left_click(self):
-        subprocess.run([get_script_path("brightness.sh"), "up"])
+        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "up"])
         self.brightness()
 
 
     def on_right_click(self):
-        subprocess.run([get_script_path("brightness.sh"), "down"])
+        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "down"])
         self.brightness()
 
-# Function to display a icon for network status. x icon disconnected, wifi for connected to wifi, Desktop pc for ethernet. see nmcli.sh
+# Function to display a icon for network status. x icon disconnected, wifi for connected to wifi, Desktop pc for ethernet. see OpenFlexOS_NerdDictation.sh
 def get_nmcli_output():
-    return subprocess.check_output([get_script_path("nmcli.sh")]).decode("utf-8").strip()
+    return subprocess.check_output([get_script_path("OpenFlexOS_NerdDictation.sh")]).decode("utf-8").strip()
 
 #############################################################
 ############### Variables ###################################
@@ -353,14 +353,14 @@ keys = [
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 
     # Start of My Config: setting my own keys
-    Key([alt], "q", lazy.spawn(get_script_path("power.sh")), desc="Powermenu"),
-    Key([alt], "d", lazy.spawn(get_script_path("applications.sh")), desc="Menu"),
+    Key([alt], "q", lazy.spawn(get_script_path("OpenFlexOS_Power.sh")), desc="Powermenu"),
+    Key([alt], "d", lazy.spawn(get_script_path("OpenFlexOS_Applications.sh")), desc="Menu"),
     Key([alt], "f", lazy.spawn("firefox"), desc="Launch Firefox"),
-    Key([mod, alt], "b", lazy.spawn([get_script_path("nerd-dictation.sh"), "start"]), desc="begin/start nerd dictation"),
-    Key([mod, alt], "e", lazy.spawn([get_script_path("nerd-dictation.sh"), "stop"]), desc="end/stop nerd dictation"),
-    Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("volume.sh") + " up"), desc="Increase volume"),
-    Key([], "XF86AudioLowerVolume", lazy.spawn(get_script_path("volume.sh") + " down"), desc="Decrease volume"),
-    Key([], "XF86AudioMute", lazy.spawn(get_script_path("volume.sh") + " mute"), desc="Mute/Unmute"),
+    Key([mod, alt], "b", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "start"]), desc="begin/start nerd dictation"),
+    Key([mod, alt], "e", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "stop"]), desc="end/stop nerd dictation"),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " up"), desc="Increase volume"),
+    Key([], "XF86AudioLowerVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " down"), desc="Decrease volume"),
+    Key([], "XF86AudioMute", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " mute"), desc="Mute/Unmute"),
 
     # End of My Config: setting my own keys
 ]
@@ -394,14 +394,14 @@ script_widget = widget.GenPollText(
     func=get_nmcli_output,
     update_interval=1,
     fmt='{} ',  # You can customize the formatting here
-    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("rofi-wifi-menu.sh"))},
+    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_RofiWifiMenu.sh"))},
     foreground='#d2691e',  # Chocolate
 )
 
 ssh_widget = widget.TextBox(
     text="SSH",  # Choose a suitable icon (here's an SSH-related icon)
     foreground='#d2691e',  # Chocolate color, same as your other widgets
-    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("ssh.sh"))},
+    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh"))},
 )
 
 floating_layout = layout.Floating(

@@ -25,7 +25,7 @@ fi
 
 
 # Loads the login sound and plays a login sound at login
-source /home/$USER/.config/openbox/scripts/sounds.sh
+source /home/$USER/.config/openbox/scripts/OpenFlexOS_Sounds.sh
 if [[ ! -z "$login_sound" ]]; then
     mpv --no-video "${sounds_dir}${login_sound}" &
 fi
@@ -47,8 +47,8 @@ picom &
 
 
 # Start Scripts at Login
-/home/$USER/.config/qtile/scripts/Battery_Hibernate.sh &
+/home/$USER/.config/qtile/scripts/OpenFlexOS_BatteryHibernate.sh &
 # Set wallpaper every 30 minutes
-#/usr/local/bin/wallpaper_changer.sh random 30m
+#/usr/local/bin/OpenFlexOS_WallpaperChanger.sh random 30m
 # Set wallpaper at login
-#/usr/local/bin/wallpaper_changer.sh random
+#/usr/local/bin/OpenFlexOS_WallpaperChanger.sh random
