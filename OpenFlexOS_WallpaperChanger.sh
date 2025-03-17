@@ -131,36 +131,36 @@
                     Slide_Show "${OPTARG}"
                     exit 0
                 else
-                    echo "Invalid Input: Please use $0 slideshow <interval> (e.g., 30s, 5m)"
+                    echo "Invalid Input: Please use $(basename "$0") slideshow <interval> (e.g., 30s, 5m)"
                     exit 1
                 fi
                 ;;
             h)
                 echo "A Wallpaper Changer with a few features, such as static wallpaper, random wallpaper, cycling wallpapers, and a slideshow."
-                echo "Usage: $0 [OPTION] [ARGUMENT]"
+                echo "Usage: $(basename "$0") [OPTION] [ARGUMENT]"
                 echo ""
 
-                printf "%-25s %s\n" " $0" "Run Zenity GUI"
-                printf "%-25s %s\n" " -s" "Select a static wallpaper with sxiv"
+                printf "%-30s %s\n" " $(basename "$0")" "Run Zenity GUI to select the the options below"
+                printf "%-30s %s\n" " -s" "Select a static wallpaper with sxiv"
 
-                printf "%-25s %s\n" " -r" "Apply a random wallpaper"
-                printf "%-25s %s\n" " -b" "Start cycling wallpapers with a given interval using feh"
-                printf "%-25s %s\n" " -e" "Stop cycling wallpapers"
-                printf "%-25s %s\n" " -S" "Start a slideshow with a given interval using feh"
+                printf "%-30s %s\n" " -r" "Apply a random wallpaper using feh"
+                printf "%-30s %s\n" " -b" "Start cycling wallpapers with a given interval using feh"
+                printf "%-30s %s\n" " -e" "Stop cycling wallpapers using feh"
+                printf "%-30s %s\n" " -S" "Start a slideshow with a given interval using feh"
                 echo ""
 
                 echo " EXAMPLES:"
                 echo""
-                printf "%-25s %s\n" " $0 -b 10s" "Start a wallpaper cycle every 10 seconds"
-                printf "%-25s %s\n" " $0 -b 5m" "Start a wallpaper cycle every 5 Minutes"
-                printf "%-25s %s\n" " $0 -e" "Stop the wallpaper cycle"
+                printf "%-30s %s\n" " $(basename "$0") -b 10s" "Start a wallpaper cycle every 10 seconds"
+                printf "%-30s %s\n" " $(basename "$0") -b 5m" "Start a wallpaper cycle every 5 Minutes"
+                printf "%-30s %s\n" " $(basename "$0") -e" "Stop the wallpaper cycle"
                 echo ""
-                printf "%-25s %s\n" " $0 -S 10s" "Start a full screen slideshow every 10 seconds"
-                printf "%-25s %s\n" " $0 -S 5m" "Start a full screen slideshow every 5 Minutes"
+                printf "%-30s %s\n" " $(basename "$0") -S 10s" "Start a full screen slideshow every 10 seconds"
+                printf "%-30s %s\n" " $(basename "$0") -S 5m" "Start a full screen slideshow every 5 Minutes"
 
                 ;;
             *)
-                echo "Invaild Option, Please use $0 -h for help"
+                echo "Invaild Option, Please use $(basename "$0") -h for help"
                 ;;
         esac
         exit 0
