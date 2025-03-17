@@ -28,6 +28,7 @@
     Select_Random_Wallpaper() {
         WALLPAPER=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | shuf -n 1)
         feh --bg-fill "$WALLPAPER" && echo "$WALLPAPER" > /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
+        dunstify -u normal "Wallpaper Appiled"
     }
 # Function: Starts a Cycling wallpapers
     Start_Wallpaper_Cycle() {
@@ -103,60 +104,67 @@
     MENU_OPTION=$( [[ -f "$PID_FILE" && $(pgrep -F "$PID_FILE") ]] && echo "Stop Wallpaper Cycle" || echo "Start Wallpaper Cycle" )
 
 # Commandline Options
-    if [[ -n "$1" ]]; then 
-        if [[ ! $1 = select ]] && [[ ! $1 = random ]] && [[ ! $1 = cycle ]] && [[ ! $1 = slideshow ]]; then
-            echo "Invalid Input: Please use $0 select|random|cycle|slideshow"
-            exit 1
-        fi
-        case "$1" in
-            select)
+    while getopts "srb:eS:h" main 2>/dev/null; do
+        case "${main}" in
+            s)
                 Select_Wallpaper
                 exit 0
                 ;;
-            random)
+            r)
                 Select_Random_Wallpaper
                 exit 0
                 ;;
-            cycle)
-                case "$2" in
-                    start)
-                        if [[ "$3" =~ ^[0-9]+[smSM]$ ]]; then
-                            Start_Wallpaper_Cycle "$3"
-                            exit 0
-                        else
-                            echo "Invalid Input: Please use $0 cycle start <interval> (e.g., 30s, 5m)"
-                            exit 1
-                        fi
-                        ;;
-                    stop)
-                        Stop_Wallpaper_Cycle
-                        exit 0
-                        ;;
-                    *)
-                        echo "Invalid Input: Please use $0 cycle {start <interval>|stop}"
-                        exit 1
-                        ;;
-                esac
+            b)
+                if [[ "${OPTARG}" =~ ^[0-9]+[smSM]$ ]]; then
+                    Start_Wallpaper_Cycle "${OPTARG}"
+                    dunstify -u normal "Wallpaper Appiled every: "${OPTARG}""
+                    exit 0
+                fi
                 ;;
-            slideshow)
-                case "$1" in
-                    slideshow)
-                        if [[ "$2" =~ ^[0-9]+[smSM]$ ]]; then
-                            Slide_Show "$2"
-                            exit 0
-                        else
-                            echo "Invalid Input: Please use $0 slideshow <interval> (e.g., 30s, 5m)"
-                            exit 1
-                        fi
-                        ;;
-                    *)
-                        echo "Invalid Input: Please use $0 slideshow {<interval>}"
-                        exit 1
-                        ;;
-                esac
+            e)
+                Stop_Wallpaper_Cycle
+                dunstify -u normal "Wallpaper Stopped"
+                exit 0
+                ;;
+            S)
+                if [[ "${OPTARG}" =~ ^[0-9]+[smSM]$ ]]; then
+                    Slide_Show "${OPTARG}"
+                    exit 0
+                else
+                    echo "Invalid Input: Please use $0 slideshow <interval> (e.g., 30s, 5m)"
+                    exit 1
+                fi
+                ;;
+            h)
+                echo "A Wallpaper Changer with a few features, such as static wallpaper, random wallpaper, cycling wallpapers, and a slideshow."
+                echo "Usage: $0 [OPTION] [ARGUMENT]"
+                echo ""
+
+                printf "%-25s %s\n" " $0" "Run Zenity GUI"
+                printf "%-25s %s\n" " -s" "Select a static wallpaper with sxiv"
+
+                printf "%-25s %s\n" " -r" "Apply a random wallpaper"
+                printf "%-25s %s\n" " -b" "Start cycling wallpapers with a given interval using feh"
+                printf "%-25s %s\n" " -e" "Stop cycling wallpapers"
+                printf "%-25s %s\n" " -S" "Start a slideshow with a given interval using feh"
+                echo ""
+
+                echo " EXAMPLES:"
+                echo""
+                printf "%-25s %s\n" " $0 -b 10s" "Start a wallpaper cycle every 10 seconds"
+                printf "%-25s %s\n" " $0 -b 5m" "Start a wallpaper cycle every 5 Minutes"
+                printf "%-25s %s\n" " $0 -e" "Stop the wallpaper cycle"
+                echo ""
+                printf "%-25s %s\n" " $0 -S 10s" "Start a full screen slideshow every 10 seconds"
+                printf "%-25s %s\n" " $0 -S 5m" "Start a full screen slideshow every 5 Minutes"
+
+                ;;
+            *)
+                echo "Invaild Option, Please use $0 -h for help"
                 ;;
         esac
-    fi
+        exit 0
+    done
 
 # GUI Menu using zenity
     CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" "Select Wallpaper" "Select Random Wallpaper" "$MENU_OPTION" "SlideShow")
