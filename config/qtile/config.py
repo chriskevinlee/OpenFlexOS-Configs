@@ -16,14 +16,169 @@ from libqtile.widget import TextBox
 ############### Functions ###################################
 #############################################################
 
+# Function to get script's Path to then call on later
+def get_script_path(script_name):
+    home_dir = os.path.expanduser("~")
+    return os.path.join(home_dir, ".config", "qtile", "scripts", script_name)
+
 # Function to auto-start applicaions/proesses at login
 @hook.subscribe.startup_once
 def autostart():
     script = get_script_path('OpenFlexOS_AutoStart.sh')
     subprocess.Popen([script])
 
-# Function for qtile bar
-def init_bar():
+# Battery Function to display a Battery and battery percent if a battery is Available, if battery is not available it don't display anything
+def battery_widget():
+    if os.path.exists("/sys/class/power_supply/BAT1"):
+        return widget.Battery(
+            battery="BAT1",
+            charge_char="󰂄 ",
+            discharge_char="  ",
+            format="{char} {percent:2.0%}",
+            full_char="",
+            update_interval=1,
+            foreground='#0048ba'  # Absolute Zero
+        )
+    else:
+        return widget.TextBox(text="", width=0)
+
+# Function to display a icon for network status. x icon disconnected, wifi for connected to wifi, Desktop pc for ethernet. see OpenFlexOS_NerdDictation.sh
+def get_nmcli_output():
+    return subprocess.check_output([get_script_path("OpenFlexOS_NetworkManagerCLI.sh")]).decode("utf-8").strip()
+
+# Function for Resize Floating Windows, See "keys =" for seting Keybindings
+@lazy.function
+def resize_floating_window(qtile, width: int = 0, height: int = 0):
+    w = qtile.current_window
+    w.cmd_set_size_floating(w.width + width, w.height + height)
+
+#############################################################
+############### Class #######################################
+#############################################################
+
+# Function to display Screen brightnless and allow left click and right click
+class BrightnessWidget(TextBox):
+    def __init__(self):
+        super().__init__(text="Vol", foreground="#ace1af")  # Celadon
+        self.brightness()
+        # Add callbacks to the widget
+        self.add_callbacks({'Button1': self.on_left_click, 'Button3': self.on_right_click})
+    def brightness(self):
+        # Run your OpenFlexOS_Brightness.sh script to get the volume level or mute state
+        result = subprocess.run([get_script_path("OpenFlexOS_Brightness.sh")], capture_output=True, text=True)
+        self.text = result.stdout.strip()
+        self.draw()
+    def on_left_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "up"])
+        self.brightness()
+    def on_right_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "down"])
+        self.brightness()
+
+# Function to display volume percentage and to allow left click, right click and middle click
+class VolumeWidget(TextBox):
+    def __init__(self):
+        super().__init__(text="Vol", foreground="#ace1af")  # Celadon color
+        self.update_volume()
+        # Add callbacks for mouse clicks
+        self.add_callbacks({
+            'Button1': self.on_left_click,  # Left click: Increase volume
+            'Button2': self.on_middle_click,  # Middle click: Mute/unmute
+            'Button3': self.on_right_click   # Right click: Decrease volume
+        })
+        # Start a background thread to keep updating the widget
+        self.start_polling()
+    def start_polling(self):
+        """Update the volume widget every second in a background thread."""
+        def poll():
+            while True:
+                self.update_volume()
+                time.sleep(1)  # Adjust interval as needed
+        thread = threading.Thread(target=poll, daemon=True)
+        thread.start()
+    def update_volume(self):
+        """Fetch volume level and update the widget text."""
+        result = subprocess.run([get_script_path("OpenFlexOS_Volume.sh")], capture_output=True, text=True)
+        self.text = result.stdout.strip()
+        self.draw()
+    def on_left_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "up"])
+        self.update_volume()
+    def on_right_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "down"])
+        self.update_volume()
+    def on_middle_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "mute"])
+        self.update_volume()
+# Create the widget instance globally so hooks can reference it
+volume_widget = VolumeWidget()
+# Qtile Hooks to Refresh the Widget
+@hook.subscribe.startup
+def update_volume_on_start():
+    volume_widget.update_volume()
+
+# Function to display start/stop for nerd_dictation and to allow left and right click
+class nerd_dictation(TextBox):
+    def __init__(self):
+        super().__init__(text="nd", foreground="#ace1af")  # Celadon color
+        self.update_nerd_dictation()
+        # Add callbacks for mouse clicks
+        self.add_callbacks({
+            'Button1': self.on_left_click,  # Left click: Increase volume
+            'Button3': self.on_right_click   # Right click: Decrease volume
+        })
+        # Start a background thread to keep updating the widget
+        self.start_polling()
+    def start_polling(self):
+        def poll():
+            while True:
+                self.update_nerd_dictation()
+                time.sleep(1)  # Adjust interval as needed
+        thread = threading.Thread(target=poll, daemon=True)
+        thread.start()
+    def update_nerd_dictation(self):
+        result = subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh")], capture_output=True, text=True)
+        self.text = result.stdout.strip()
+        self.draw()
+    def on_left_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "start"])
+        self.update_nerd_dictation()
+    def on_right_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "stop"])
+        self.update_nerd_dictation()
+# Create the widget instance globally so hooks can reference it
+nerddictation = nerd_dictation()
+
+#############################################################
+############### Widgets #####################################
+#############################################################
+script_widget = widget.GenPollText(
+    func=get_nmcli_output,
+    update_interval=1,
+    fmt='{} ',  # You can customize the formatting here
+    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_RofiWifiMenu.sh"))},
+    foreground='#d2691e',  # Chocolate
+)
+
+ssh_widget = widget.TextBox(
+    text="SSH",  # Choose a suitable icon (here's an SSH-related icon)
+    foreground='#d2691e',  # Chocolate color, same as your other widgets
+    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh"))},
+)
+
+# Function to get Login User to Display on qtile bar
+def get_current_user():
+    return subprocess.check_output(["/bin/bash", "-c", "echo $USER"]).decode().strip()
+
+current_user_widget = widget.TextBox(
+    text=get_current_user(),
+    foreground='#ffe135',  # Choose your desired color
+)
+   
+#############################################################
+############### Bar #######################################
+#############################################################
+def init_bar(margin_left=0, margin_right=0, margin_top=0, margin_bottom=0):
     return bar.Bar(
         [
             widget.TextBox(
@@ -98,157 +253,37 @@ def init_bar():
             ),
         ],
         24,  # Bar size (height in pixels)
+        margin=[margin_top, margin_right, margin_bottom, margin_left],  # Correct margin order
     )
 
-# Function for Resize Floating Windows, See "keys =" for seting Keybindings
-@lazy.function
-def resize_floating_window(qtile, width: int = 0, height: int = 0):
-    w = qtile.current_window
-    w.cmd_set_size_floating(w.width + width, w.height + height)
+# Bottom bar (can be similar or different widgets from the top bar)
+def init_bottom_bar():
+    return bar.Bar(
+        [
+            widget.Clock(
+                foreground='#4666ff',  # Neon Blue
+                format="  %a %d-%m-%Y",
+            ),
+            widget.Spacer(length=10),
+            widget.Clock(
+                foreground='#ffe135',  # Banana Yellow
+                format="  %I:%M:%S %p",
+            ),
+            widget.Spacer(length=10),
+            # Add any other widgets you want for the bottom bar here
+        ],
+        24,  # Bar size (height in pixels)
+    )
 
-# Function to get Login User to Display on qtile bar
-def get_current_user():
-    return subprocess.check_output(["/bin/bash", "-c", "echo $USER"]).decode().strip()
-
-# Function to get script's Path to then call on later
-def get_script_path(script_name):
-    home_dir = os.path.expanduser("~")
-    return os.path.join(home_dir, ".config", "qtile", "scripts", script_name)
-
-# Battery Function to display a Battery and battery percent if a battery is Available, if battery is not available it don't display anything
-def battery_widget():
-    if os.path.exists("/sys/class/power_supply/BAT1"):
-        return widget.Battery(
-            battery="BAT1",
-            charge_char="󰂄 ",
-            discharge_char="  ",
-            format="{char} {percent:2.0%}",
-            full_char="",
-            update_interval=1,
-            foreground='#0048ba'  # Absolute Zero
-        )
-    else:
-        return widget.TextBox(text="", width=0)
-
-# Function to display start/stop for nerd_dictation and to allow left and right click
-class nerd_dictation(TextBox):
-    def __init__(self):
-        super().__init__(text="nd", foreground="#ace1af")  # Celadon color
-        self.update_nerd_dictation()
-
-        # Add callbacks for mouse clicks
-        self.add_callbacks({
-            'Button1': self.on_left_click,  # Left click: Increase volume
-            'Button3': self.on_right_click   # Right click: Decrease volume
-        })
-
-        # Start a background thread to keep updating the widget
-        self.start_polling()
-
-    def start_polling(self):
-        def poll():
-            while True:
-                self.update_nerd_dictation()
-                time.sleep(1)  # Adjust interval as needed
-
-        thread = threading.Thread(target=poll, daemon=True)
-        thread.start()
-
-    def update_nerd_dictation(self):
-        result = subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh")], capture_output=True, text=True)
-        self.text = result.stdout.strip()
-        self.draw()
-
-    def on_left_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "start"])
-        self.update_nerd_dictation()
-
-    def on_right_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "stop"])
-        self.update_nerd_dictation()
-
-# Create the widget instance globally so hooks can reference it
-nerddictation = nerd_dictation()
-
-# Function to display volume percentage and to allow left click, right click and middle click
-class VolumeWidget(TextBox):
-    def __init__(self):
-        super().__init__(text="Vol", foreground="#ace1af")  # Celadon color
-        self.update_volume()
-
-        # Add callbacks for mouse clicks
-        self.add_callbacks({
-            'Button1': self.on_left_click,  # Left click: Increase volume
-            'Button2': self.on_middle_click,  # Middle click: Mute/unmute
-            'Button3': self.on_right_click   # Right click: Decrease volume
-        })
-
-        # Start a background thread to keep updating the widget
-        self.start_polling()
-
-    def start_polling(self):
-        """Update the volume widget every second in a background thread."""
-        def poll():
-            while True:
-                self.update_volume()
-                time.sleep(1)  # Adjust interval as needed
-
-        thread = threading.Thread(target=poll, daemon=True)
-        thread.start()
-
-    def update_volume(self):
-        """Fetch volume level and update the widget text."""
-        result = subprocess.run([get_script_path("OpenFlexOS_Volume.sh")], capture_output=True, text=True)
-        self.text = result.stdout.strip()
-        self.draw()
-
-    def on_left_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "up"])
-        self.update_volume()
-
-    def on_right_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "down"])
-        self.update_volume()
-
-    def on_middle_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "mute"])
-        self.update_volume()
-
-# Create the widget instance globally so hooks can reference it
-volume_widget = VolumeWidget()
-
-# Qtile Hooks to Refresh the Widget
-@hook.subscribe.startup
-def update_volume_on_start():
-    volume_widget.update_volume()
-
-# Function to display Screen brightnless and allow left click and right click
-class BrightnessWidget(TextBox):
-    def __init__(self):
-        super().__init__(text="Vol", foreground="#ace1af")  # Celadon
-        self.brightness()
-
-        # Add callbacks to the widget
-        self.add_callbacks({'Button1': self.on_left_click, 'Button3': self.on_right_click})
-
-    def brightness(self):
-        # Run your OpenFlexOS_Brightness.sh script to get the volume level or mute state
-        result = subprocess.run([get_script_path("OpenFlexOS_Brightness.sh")], capture_output=True, text=True)
-        self.text = result.stdout.strip()
-        self.draw()
-
-    def on_left_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "up"])
-        self.brightness()
-
-
-    def on_right_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "down"])
-        self.brightness()
-
-# Function to display a icon for network status. x icon disconnected, wifi for connected to wifi, Desktop pc for ethernet. see OpenFlexOS_NerdDictation.sh
-def get_nmcli_output():
-    return subprocess.check_output([get_script_path("OpenFlexOS_NerdDictation.sh")]).decode("utf-8").strip()
+# Define screens for each monitor with top and bottom bars
+screens = [
+    Screen(
+        top=init_bar(margin_top=5, margin_right=10, margin_bottom=0, margin_left=10), # Screen 1 Top Bar
+    ),
+    Screen(
+        top=init_bar(margin_top=5, margin_right=10, margin_bottom=0, margin_left=10), # Screen 2 Top Bar
+    ),
+]
 
 #############################################################
 ############### Variables ###################################
@@ -292,7 +327,26 @@ focus_on_window_activation = "smart"
 # Reload screen configurations when they change (e.g., external monitors)
 reconfigure_screens = True
 
-# Keybindings
+# If things like steam games want to auto-minimize themselves when losing
+# focus, should we respect this or not?
+auto_minimize = True
+
+# When using the Wayland backend, this can be used to configure input devices.
+wl_input_rules = None
+
+# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
+# string besides java UI toolkits; you can see several discussions on thef
+# mailing lists, GitHub issues, and other WM documentation that suggest setting
+# this string if your java app doesn't work correctly. We may as well just lie
+# and say that we're a working one by default.
+#
+# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
+# java that happens to be on java's whitelist.
+wmname = "LG3D"
+
+#############################################################
+############### KeyBindings #################################
+#############################################################
 keys = [
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
@@ -361,10 +415,12 @@ keys = [
     Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " up"), desc="Increase volume"),
     Key([], "XF86AudioLowerVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " down"), desc="Decrease volume"),
     Key([], "XF86AudioMute", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " mute"), desc="Mute/Unmute"),
-
     # End of My Config: setting my own keys
 ]
 
+#############################################################
+############### Miscellaneous ###############################
+#############################################################
 layouts = [
     layout.MonadTall(margin=15),
     layout.MonadWide(margin=15),
@@ -372,7 +428,6 @@ layouts = [
     layout.TreeTab(),
 ]
 
-# Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
@@ -383,25 +438,6 @@ widget_defaults = dict(
     font="sans",
     fontsize=15,
     padding=3,
-)
-
-current_user_widget = widget.TextBox(
-    text=get_current_user(),
-    foreground='#ffe135',  # Choose your desired color
-)
-
-script_widget = widget.GenPollText(
-    func=get_nmcli_output,
-    update_interval=1,
-    fmt='{} ',  # You can customize the formatting here
-    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_RofiWifiMenu.sh"))},
-    foreground='#d2691e',  # Chocolate
-)
-
-ssh_widget = widget.TextBox(
-    text="SSH",  # Choose a suitable icon (here's an SSH-related icon)
-    foreground='#d2691e',  # Chocolate color, same as your other widgets
-    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh"))},
 )
 
 floating_layout = layout.Floating(
@@ -419,32 +455,7 @@ floating_layout = layout.Floating(
     ]
 )
 
-volume_widget = VolumeWidget()
-
 extension_defaults = widget_defaults.copy()
-
-screens = [
-    Screen(top=init_bar()),  # Screen 1
-    Screen(top=init_bar()),  # Screen 2
-    Screen(top=init_bar()),  # Screen 3
-]
-
-# If things like steam games want to auto-minimize themselves when losing
-# focus, should we respect this or not?
-auto_minimize = True
-
-# When using the Wayland backend, this can be used to configure input devices.
-wl_input_rules = None
-
-# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
-# string besides java UI toolkits; you can see several discussions on thef
-# mailing lists, GitHub issues, and other WM documentation that suggest setting
-# this string if your java app doesn't work correctly. We may as well just lie
-# and say that we're a working one by default.
-#
-# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
-# java that happens to be on java's whitelist.
-wmname = "LG3D"
 
 #############################################################
 ############### For Loops ###################################
