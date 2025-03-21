@@ -178,9 +178,8 @@ current_user_widget = widget.TextBox(
 #############################################################
 ############### Bar #######################################
 #############################################################
-def init_bar(margin_left=0, margin_right=0, margin_top=0, margin_bottom=0):
-    return bar.Bar(
-        [
+def init_widgets_list():
+    widgets_list = [
             widget.TextBox(
                 text=" ",
                 foreground='#00ffff',  # Aqua
@@ -251,39 +250,31 @@ def init_bar(margin_left=0, margin_right=0, margin_top=0, margin_bottom=0):
                 foreground='#00ff7f',  # SpringGreen1
                 mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh"))},
             ),
-        ],
-        24,  # Bar size (height in pixels)
-        margin=[margin_top, margin_right, margin_bottom, margin_left],  # Correct margin order
-    )
 
-# Bottom bar (can be similar or different widgets from the top bar)
-def init_bottom_bar():
-    return bar.Bar(
-        [
-            widget.Clock(
-                foreground='#4666ff',  # Neon Blue
-                format="  %a %d-%m-%Y",
-            ),
-            widget.Spacer(length=10),
-            widget.Clock(
-                foreground='#ffe135',  # Banana Yellow
-                format="  %I:%M:%S %p",
-            ),
-            widget.Spacer(length=10),
-            # Add any other widgets you want for the bottom bar here
-        ],
-        24,  # Bar size (height in pixels)
-    )
+        ]
+    return widgets_list
 
-# Define screens for each monitor with top and bottom bars
-screens = [
-    Screen(
-        top=init_bar(margin_top=5, margin_right=10, margin_bottom=0, margin_left=10), # Screen 1 Top Bar
-    ),
-    Screen(
-        top=init_bar(margin_top=5, margin_right=10, margin_bottom=0, margin_left=10), # Screen 2 Top Bar
-    ),
-]
+def init_widgets_screen1():
+    widgets_screen1 = init_widgets_list()
+    return widgets_screen1 
+
+def init_widgets_screen2():
+    widgets_screen2 = init_widgets_list()
+    # Remove Widgets by counting the number of widgets and use the number of that widget starting from 0, EG remove first widget use 0 [0] or [0:4] below
+    # 14=systray
+    del widgets_screen2[14]
+    return widgets_screen2
+
+def init_screens():
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[10, 13, 0, 13], size=24)),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24)),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24))]
+
+if __name__ in ["config", "__main__"]:
+    screens = init_screens()
+    widgets_list = init_widgets_list()
+    widgets_screen1 = init_widgets_screen1()
+    widgets_screen2 = init_widgets_screen2()
 
 #############################################################
 ############### Variables ###################################
