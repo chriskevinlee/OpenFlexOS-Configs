@@ -180,6 +180,7 @@ current_user_widget = widget.TextBox(
 #############################################################
 def init_widgets_list():
     widgets_list = [
+            widget.Spacer(length=10),
             widget.TextBox(
                 text=" ",
                 foreground='#00ffff',  # Aqua
@@ -250,6 +251,7 @@ def init_widgets_list():
                 foreground='#00ff7f',  # SpringGreen1
                 mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh"))},
             ),
+            widget.Spacer(length=10),
 
         ]
     return widgets_list
@@ -261,14 +263,14 @@ def init_widgets_screen1():
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
     # Remove Widgets by counting the number of widgets and use the number of that widget starting from 0, EG remove first widget use 0 [0] or [0:4] below
-    # 14=systray
-    del widgets_screen2[14]
+    # 15=systray
+    del widgets_screen2[15]
     return widgets_screen2
 
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[10, 13, 0, 13], size=24)),
-            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24)),
-            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24))]
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59")),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59")),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59"))]
 
 if __name__ in ["config", "__main__"]:
     screens = init_screens()
