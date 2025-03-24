@@ -15,7 +15,7 @@
 # Function: Set Mutli-Monitor Wallpapers
     Mutli_Monitor_Wallpapers(){
     # Path to the wallpaper config file
-    wallpaper_file="$HOME/.config/$DESKTOP_SESSION/.selected_wallpaper"
+    wallpaper_file="$HOME/.config/$DESKTOP_SESSION/.multi_selected_wallpaper"
 
     # Get the list of connected monitors and store them in an array
     monitors=($(xrandr --listmonitors | awk 'NR>1 {print $4}'))
@@ -72,8 +72,17 @@
 
     # Apply wallpapers in correct order
     feh --no-fehbg --bg-scale "${wallpapers[$primary_monitor]}" --bg-scale "${wallpapers[$secondary_monitor]}"
+        
+    if [[ -f $HOME/.config/$DESKTOP_SESSION/.selected_wallpaper ]]; then
+        rm $HOME/.config/$DESKTOP_SESSION/.selected_wallpaper
+    fi
+
+
+
+
+
         }
-    # Function: Set a static wallpaper
+# Function: Set a static wallpaper
         Select_Wallpaper(){
             sxiv -t -r "${WALLPAPER_DIRS[@]}" &
             sleep 1
@@ -84,6 +93,11 @@
             fi
             wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
             # See file /home/$USER/.config/sxiv/exec/key-handler that will run feh to applied the wallpaper, send notifcation and save /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
+            if [[ -f $HOME/.config/$DESKTOP_SESSION/.multi_selected_wallpaper ]]; then
+                rm $HOME/.config/$DESKTOP_SESSION/.multi_selected_wallpaper
+            fi
+
+
         }
 # Function: Set a random wallpaper
     Select_Random_Wallpaper() {
