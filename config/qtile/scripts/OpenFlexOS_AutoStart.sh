@@ -8,9 +8,22 @@
 # Notes:
 # ================================================================
 
-# Define the wallpaper configuration file
-CONFIG_FILE="$HOME/.config/qtile/.selected_wallpaper"
+### For singal wallpaper
+# Create a config file if it dont exists, saves the wallpaper the user selected and applies the wallpaper at login
+CONFIG_FILE="/home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper"
 
+# Check if the configuration file exists and is not empty
+if [ -s "$CONFIG_FILE" ]; then
+  # Read the saved wallpaper path
+  SELECTED_WALLPAPER=$(cat "$CONFIG_FILE")
+  # Apply the wallpaper using feh
+  feh --bg-scale "$SELECTED_WALLPAPER" &
+fi
+
+
+## For multi wallpaper
+# Define the wallpaper configuration file
+CONFIG_FILE="$HOME/.config/qtile/.multi_selected_wallpaper"
 # Check if the configuration file exists and is not empty
 if [[ -s "$CONFIG_FILE" ]]; then
     # Create an array to store wallpaper arguments
@@ -33,9 +46,8 @@ else
     echo "Wallpaper config file is missing or empty."
 fi
 
-
 # Loads the login sound and plays a login sound at login
-source /home/$USER/.config/openbox/scripts/OpenFlexOS_Sounds.sh
+source /home/$USER/.config/qtile/scripts/OpenFlexOS_Sounds.sh
 if [[ ! -z "$login_sound" ]]; then
     mpv --no-video "${sounds_dir}${login_sound}" &
 fi
