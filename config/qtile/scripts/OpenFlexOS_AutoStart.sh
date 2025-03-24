@@ -8,19 +8,29 @@
 # Notes:
 # ================================================================
 
-# Create a config file if it dont exists, saves the wallpaper the user selected and applies the wallpaper at login
-CONFIG_FILE="/home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper"
-# Check if the configuration file exists and is not empty
-if [ -s "$CONFIG_FILE" ]; then
-  # Read the saved wallpaper path
-  SELECTED_WALLPAPER=$(cat "$CONFIG_FILE")
+# Define the wallpaper configuration file
+CONFIG_FILE="$HOME/.config/qtile/.selected_wallpaper"
 
-  # Apply the wallpaper using feh
-  feh --bg-scale "$SELECTED_WALLPAPER" &
-elif [ ! -f "$CONFIG_FILE" ]; then
-        echo /home/$USER/.config/wallpapers/default/6xVGpvY-arch-linux-wallpaper.png > /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
-        SELECTED_WALLPAPER=$(cat "$CONFIG_FILE")
-        feh --bg-scale "$SELECTED_WALLPAPER" &
+# Check if the configuration file exists and is not empty
+if [[ -s "$CONFIG_FILE" ]]; then
+    # Create an array to store wallpaper arguments
+    wallpaper_args=()
+
+    # Read each line of the file
+    while IFS='=' read -r monitor wallpaper; do
+        # Ensure the line is not empty and the wallpaper file exists
+        if [[ -n "$monitor" && -n "$wallpaper" && -f "$wallpaper" ]]; then
+            # Store the wallpaper arguments for feh
+            wallpaper_args+=("--bg-scale" "$wallpaper")
+        fi
+    done < "$CONFIG_FILE"
+
+    # Apply all wallpapers at once using feh
+    if [[ ${#wallpaper_args[@]} -gt 0 ]]; then
+        feh --no-fehbg "${wallpaper_args[@]}" &
+    fi
+else
+    echo "Wallpaper config file is missing or empty."
 fi
 
 
