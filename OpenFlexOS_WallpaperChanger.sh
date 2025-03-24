@@ -12,18 +12,79 @@
 # Create a temporary file for cycling wallpapers
     PID_FILE="/tmp/wallpaper_timer.pid"
 
-# Function: Set a static wallpaper
-    Select_Wallpaper(){
-        sxiv -t -r "${WALLPAPER_DIRS[@]}" &
-        sleep 1
-        window_id=$(wmctrl -l | grep "sxiv" | awk '{print $1}')
-            if [ -z "$window_id" ]; then
-            zenity --error --text="sxiv window not found!"
-            exit 1
-        fi
-        wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
-        # See file /home/$USER/.config/sxiv/exec/key-handler that will run feh to applied the wallpaper, send notifcation and save /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
-    }
+# Function: Set Mutli-Monitor Wallpapers
+    Mutli_Monitor_Wallpapers(){
+    # Path to the wallpaper config file
+    wallpaper_file="$HOME/.config/$DESKTOP_SESSION/.selected_wallpaper"
+
+    # Get the list of connected monitors and store them in an array
+    monitors=($(xrandr --listmonitors | awk 'NR>1 {print $4}'))
+
+    # Declare an associative array to store monitor wallpapers
+    declare -A wallpapers
+
+    # Load existing wallpapers from the config file
+    if [[ -f "$wallpaper_file" ]]; then
+        while IFS='=' read -r monitor wallpaper; do
+            wallpapers["$monitor"]="$wallpaper"
+        done < <(grep -v '^#' "$wallpaper_file")
+    fi
+
+    # Create a list of monitors for Zenity
+    monitor_list=$(printf "%s\n" "${monitors[@]}")
+
+    # Ask the user to select a monitor using Zenity
+    selected_monitor=$(zenity --list --title="Select Monitor" --column="Monitors" $monitor_list)
+
+    # If user cancels, exit
+    if [[ -z "$selected_monitor" ]]; then
+        exit 1
+    fi
+
+    # Ask user to select a new wallpaper
+    new_wallpaper=$(zenity --file-selection --title="Select a wallpaper for $selected_monitor" --filename="$HOME/.config/wallpapers/")
+
+    # If user cancels, exit
+    if [[ -z "$new_wallpaper" ]]; then
+        exit 1
+    fi
+
+    # Update the selected monitor's wallpaper in the array
+    wallpapers["$selected_monitor"]="$new_wallpaper"
+
+    # Automatically determine the first two monitors (based on the order they appear in xrandr)
+    primary_monitor="${monitors[0]}"
+    secondary_monitor="${monitors[1]}"
+
+    # Save wallpapers in the correct order, dynamically assigning monitors
+    {
+        # Write primary monitor's wallpaper
+        [[ -n "${wallpapers[$primary_monitor]}" ]] && echo "$primary_monitor=${wallpapers[$primary_monitor]}"
+
+        # Write secondary monitor's wallpaper
+        [[ -n "${wallpapers[$secondary_monitor]}" ]] && echo "$secondary_monitor=${wallpapers[$secondary_monitor]}"
+
+        # Write any other monitors after that
+        for monitor in "${!wallpapers[@]}"; do
+            [[ "$monitor" != "$primary_monitor" && "$monitor" != "$secondary_monitor" ]] && echo "$monitor=${wallpapers[$monitor]}"
+        done
+    } > "$wallpaper_file"
+
+    # Apply wallpapers in correct order
+    feh --no-fehbg --bg-scale "${wallpapers[$primary_monitor]}" --bg-scale "${wallpapers[$secondary_monitor]}"
+        }
+    # Function: Set a static wallpaper
+        Select_Wallpaper(){
+            sxiv -t -r "${WALLPAPER_DIRS[@]}" &
+            sleep 1
+            window_id=$(wmctrl -l | grep "sxiv" | awk '{print $1}')
+                if [ -z "$window_id" ]; then
+                zenity --error --text="sxiv window not found!"
+                exit 1
+            fi
+            wmctrl -i -r "$window_id" -T "Select a Wallpaper...(ctrl+x+w)"
+            # See file /home/$USER/.config/sxiv/exec/key-handler that will run feh to applied the wallpaper, send notifcation and save /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
+        }
 # Function: Set a random wallpaper
     Select_Random_Wallpaper() {
         WALLPAPER=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | shuf -n 1)
@@ -167,7 +228,7 @@
     done
 
 # GUI Menu using zenity
-    CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" "Select Wallpaper" "Select Random Wallpaper" "$MENU_OPTION" "SlideShow")
+    CHOICE=$(zenity --list --title="Wallpaper Manager" --column="Options" "Select Wallpaper" "Select Random Wallpaper" "$MENU_OPTION" "SlideShow" "Mutli-Monitor Wallpapers")
     case "$CHOICE" in
         "Select Wallpaper")
             Select_Wallpaper
@@ -195,6 +256,9 @@
             [[ ! "$INTERVAL" =~ ^[0-9]+[smSM]$ ]] && { zenity --error --text="Invalid input."; exit 1; }
             Slide_Show "$INTERVAL"
             #dunstify -u normal "SlideShow Started"
+        ;;
+        "Mutli-Monitor Wallpapers")
+            Mutli_Monitor_Wallpapers
         ;;
         *) echo "No selection made.";;
     esac
