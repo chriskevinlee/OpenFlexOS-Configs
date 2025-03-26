@@ -104,6 +104,9 @@
         WALLPAPER=$(find "${WALLPAPER_DIRS[@]}" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | shuf -n 1)
         feh --bg-fill "$WALLPAPER" && echo "$WALLPAPER" > /home/$USER/.config/$DESKTOP_SESSION/.selected_wallpaper
         dunstify -u normal "Wallpaper Appiled"
+        if [[ -f $HOME/.config/$DESKTOP_SESSION/.multi_selected_wallpaper ]]; then
+                rm $HOME/.config/$DESKTOP_SESSION/.multi_selected_wallpaper
+        fi
     }
 # Function: Starts a Cycling wallpapers
     Start_Wallpaper_Cycle() {
