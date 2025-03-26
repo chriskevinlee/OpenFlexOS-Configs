@@ -263,6 +263,7 @@ def init_widgets_list():
             nerd_dictation(),
             widget.CheckUpdates(
                 distro="Arch",
+                custom_command="checkupdates; yay -Qua",
                 colour_have_updates='000000',
                 no_update_string=' NoUpdates',
                 colour_no_updates='000000',
@@ -430,6 +431,7 @@ keys = [
     Key([alt], "q", lazy.spawn(get_script_path("OpenFlexOS_Power.sh")), desc="Powermenu"),
     Key([alt], "d", lazy.spawn(get_script_path("OpenFlexOS_Applications.sh")), desc="Menu"),
     Key([alt], "f", lazy.spawn("firefox"), desc="Launch Firefox"),
+    Key([alt], "b", lazy.spawn("brave --password-store=basic"), desc="Launch Brave"),
     Key([mod, alt], "b", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "start"]), desc="begin/start nerd dictation"),
     Key([mod, alt], "e", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "stop"]), desc="end/stop nerd dictation"),
     Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " up"), desc="Increase volume"),
