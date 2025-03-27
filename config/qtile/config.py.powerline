@@ -30,6 +30,18 @@ powerlineright = {
     ]
 }
 
+powerlineroundedleft = {
+    "decorations": [
+        PowerLineDecoration(path="rounded_left")
+    ]
+}
+
+powerlineroundedright = {
+    "decorations": [
+        PowerLineDecoration(path="rounded_right")
+    ]
+}
+
 #############################################################
 ############### Functions ###################################
 #############################################################
@@ -44,7 +56,6 @@ def get_script_path(script_name):
 def autostart():
     script = get_script_path('OpenFlexOS_AutoStart.sh')
     subprocess.Popen([script])
-
 
 def battery_widget():
     if os.path.exists("/sys/class/power_supply/BAT1"):
@@ -62,7 +73,6 @@ def battery_widget():
         )
     else:
         return widget.TextBox(text="", width=0)
-
 
 # Function to display a icon for network status. x icon disconnected, wifi for connected to wifi, Desktop pc for ethernet. see OpenFlexOS_NerdDictation.sh
 def get_nmcli_output():
@@ -246,8 +256,12 @@ def init_widgets_list():
                 width=100,
             ),
             widget.Spacer(),
+            widget.Spacer(length=1, background="#1e1e2e59", **powerlineroundedright), # Same Colour as the bar
+            widget.Spacer(length=1, background="#585B70", **powerlineroundedright),
             widget.GroupBox(
-                active='#ffd700',  # Gold1
+                highlight_method='line',
+                highlight_color=["#D20F39"],
+                background="#585B70", **powerlineroundedleft
             ),
             widget.Spacer(),
             widget.Systray(
