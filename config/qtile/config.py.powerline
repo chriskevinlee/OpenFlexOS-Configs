@@ -284,6 +284,9 @@ def init_widgets_list():
                 display_format='󰇚 {updates}',
                 update_interval=60,
                 background="#E64553", **powerlineright,
+                mouse_callbacks={
+                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'")
+                }
             ),
             battery_widget(),
             nmcli_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
@@ -488,6 +491,7 @@ floating_layout = layout.Floating(
         Match(title="pinentry"),  # GPG key password entry
         Match(wm_class="Galculator"),
         Match(wm_class="zenity"),
+        Match(wm_class="tilda"),
     ]
 )
 
