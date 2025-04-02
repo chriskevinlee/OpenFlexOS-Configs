@@ -6,7 +6,7 @@ STATE_FILE="$HOME/.config/nerd-dictation-state"
 if [[ -f "$STATE_FILE" ]]; then
     LAST_STATE=$(cat "$STATE_FILE")
 else
-    LAST_STATE="!!Left click to start dictation!!"  # Default to "Left click to start dictation"
+    LAST_STATE="Left-Click: Dictate"  # Default to "Left click to start dictation"
 fi
 
 case $1 in
