@@ -218,7 +218,8 @@ def init_widgets_list():
     widgets_list = [
             widget.Spacer(length=8),
             widget.TextBox(
-                text="",
+                text="",
+		fontsize=15,
                 foreground='000000',
                 mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))},
                 background="#313244", **powerline,
@@ -285,7 +286,8 @@ def init_widgets_list():
                 update_interval=60,
                 background="#E64553", **powerlineright,
                 mouse_callbacks={
-                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'")
+                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Right Click to see updates.  Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'"),
+                    'Button3': lazy.spawn("alacritty -e bash -c 'echo \"Updates Available: \"; echo \"=======================\"; echo \"Pacman Updates: \"; echo \"=======================\"; checkupdates; echo \"\"; echo \"AUR Updates: \"; echo \"=======================\"; yay -Qua; exec $SHELL'")
                 }
             ),
             battery_widget(),
