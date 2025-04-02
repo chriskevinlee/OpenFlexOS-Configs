@@ -19,10 +19,11 @@ compinit
 
 
 # Adds the powerline prompt theme
-source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
+#source ~/.config/powerlevel10k/powerlevel10k.zsh-theme
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+#[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/base.toml)"
 
 # Shows vaild commands in green and invaild commands as red. Installed via Pacman
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
