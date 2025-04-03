@@ -1,20 +1,9 @@
 * {
-background-color: black;
-text-color: white;
-VenetianRed:#c80815;
-Aqua: #00ffff; 
-NeonBlue: #4666ff; 
-BananaYellow: #ffe135; 
-NeonGreen: #39ff14; 
-ElectricLime: #ccff00; 
-PinkFlamingo: #fc74fd; 
-SpringGreen1: #00ff7f; 
-AbsoluteZero: #0048ba; 
-Celadon: #ace1af; 
-Chocolate: #d2691e;
-VanillaIce: #f38fa9; 
-Gold1:   #ffd700;
-
+    background-color: #7F849C;
+    text-color: #000000;
+    MintGreen:#A6E3A1;
+    CherryRed:#E64553;
+    PeachCream:#F9E2AF; 
 }
 
 configuration {
@@ -27,18 +16,18 @@ window {
     width: 20%;
     height: 97%;
     border: 5px;
-    border-color: @Gold1;
+    border-color: @PeachCream;
     border-radius: 40px;
 }
 
 inputbar {
 border: 0px 0px 5px 0px;
-border-color: @Gold1;
+border-color: @PeachCream;
 padding: 10px;
 }
                               
 prompt {
- color: @VenetianRed;
+ color: @MintGreen;
 }
                                                                
 listview {
@@ -51,12 +40,12 @@ element-text {
 }
 
 element selected.normal {
-     background-color: @VenetianRed;
+     background-color: @CherryRed;
 }
 
 entry {
     placeholder: "Search";
-    color: @Celadon;
+    color: @text-color;
 }
 
 error-message {
