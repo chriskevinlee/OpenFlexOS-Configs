@@ -17,7 +17,7 @@ if [ "$launcher" = "rofi" ]; then
     exit 0
 fi
 
-if [ $launcher = dmenu ]; then
+if [ "$launcher" = "dmenu" ]; then
     # Define directories containing .desktop files
     app_dirs=("/usr/share/applications" "$HOME/.local/share/applications")
 
@@ -26,11 +26,11 @@ if [ $launcher = dmenu ]; then
 
     # Populate the associative array with application names and their .desktop paths
     for dir in "${app_dirs[@]}"; do
-
       if [ -d "$dir" ]; then
         while IFS= read -r desktop; do
           # Extract the application name
           name=$(grep -m 1 "^Name=" "$desktop" | cut -d'=' -f2)
+
           # Store the desktop path in the associative array
           app_map["$name"]="$desktop"
         done < <(find "$dir" -name "*.desktop")
@@ -38,7 +38,7 @@ if [ $launcher = dmenu ]; then
     done
 
     # Show only the application names in dmenu
-    app=$(printf '%s\n' "${!app_map[@]}" | sort -u | dmenu -i -p "Launch Application")
+    app=$(printf '%s\n' "${!app_map[@]}" | sort -u | dmenu -y 20 -x 20 -z 1880 -i -p "Launch Application")
 
     # Launch the selected application if it exists in the map
     if [ -n "$app" ] && [ -n "${app_map[$app]}" ]; then
