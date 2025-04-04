@@ -12,6 +12,36 @@ from libqtile.utils import guess_terminal
 from libqtile import hook
 from libqtile.widget import TextBox
 
+from qtile_extras import widget
+from qtile_extras.widget.decorations import PowerLineDecoration
+
+#############################################################
+############### PowerLine for bar ###########################
+#############################################################
+powerline = {
+    "decorations": [
+        PowerLineDecoration()
+    ]
+}
+
+powerlineright = {
+    "decorations": [
+        PowerLineDecoration(path="arrow_right")
+    ]
+}
+
+powerlineroundedleft = {
+    "decorations": [
+        PowerLineDecoration(path="rounded_left")
+    ]
+}
+
+powerlineroundedright = {
+    "decorations": [
+        PowerLineDecoration(path="rounded_right")
+    ]
+}
+
 #############################################################
 ############### Functions ###################################
 #############################################################
@@ -27,17 +57,19 @@ def autostart():
     script = get_script_path('OpenFlexOS_AutoStart.sh')
     subprocess.Popen([script])
 
-# Battery Function to display a Battery and battery percent if a battery is Available, if battery is not available it don't display anything
 def battery_widget():
     if os.path.exists("/sys/class/power_supply/BAT1"):
         return widget.Battery(
             battery="BAT1",
-            charge_char="󰂄 ",
-            discharge_char="  ",
-            format="{char} {percent:2.0%}",
+            charge_char="󰂄",
+            discharge_char="",
             full_char="",
+            format="{char} {percent:2.0%}",  # Ensure "Full" text is removed
+            show_short_text=False,  # Prevents Qtile from displaying "Full"
             update_interval=1,
-            foreground='#0048ba'  # Absolute Zero
+            foreground='000000',
+            background="#7F849C",
+            **powerlineright,
         )
     else:
         return widget.TextBox(text="", width=0)
@@ -52,6 +84,7 @@ def resize_floating_window(qtile, width: int = 0, height: int = 0):
     w = qtile.current_window
     w.cmd_set_size_floating(w.width + width, w.height + height)
 
+
 #############################################################
 ############### Class #######################################
 #############################################################
@@ -59,7 +92,7 @@ def resize_floating_window(qtile, width: int = 0, height: int = 0):
 # Function to display Screen brightnless and allow left click and right click
 class BrightnessWidget(TextBox):
     def __init__(self):
-        super().__init__(text="Vol", foreground="#ace1af")  # Celadon
+        super().__init__(foreground="000000", background="#F9E2AF", **powerlineright,)
         self.brightness()
         # Add callbacks to the widget
         self.add_callbacks({'Button1': self.on_left_click, 'Button3': self.on_right_click})
@@ -78,7 +111,7 @@ class BrightnessWidget(TextBox):
 # Function to display volume percentage and to allow left click, right click and middle click
 class VolumeWidget(TextBox):
     def __init__(self):
-        super().__init__(text="Vol", foreground="#ace1af")  # Celadon color
+        super().__init__(foreground="000000",background="#CBA6F7", **powerlineright,)
         self.update_volume()
         # Add callbacks for mouse clicks
         self.add_callbacks({
@@ -120,7 +153,7 @@ def update_volume_on_start():
 # Function to display start/stop for nerd_dictation and to allow left and right click
 class nerd_dictation(TextBox):
     def __init__(self):
-        super().__init__(text="nd", foreground="#ace1af")  # Celadon color
+        super().__init__(foreground="000000", background="#74C7EC", **powerlineright,)
         self.update_nerd_dictation()
         # Add callbacks for mouse clicks
         self.add_callbacks({
@@ -152,17 +185,20 @@ nerddictation = nerd_dictation()
 #############################################################
 ############### Widgets #####################################
 #############################################################
-script_widget = widget.GenPollText(
+nmcli_widget = widget.GenPollText(
     func=get_nmcli_output,
     update_interval=1,
     fmt='{} ',  # You can customize the formatting here
     mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_RofiWifiMenu.sh"))},
-    foreground='#d2691e',  # Chocolate
+    foreground='000000',
+    background="#FE640B", **powerlineright,
 )
 
 ssh_widget = widget.TextBox(
-    text="SSH",  # Choose a suitable icon (here's an SSH-related icon)
-    foreground='#d2691e',  # Chocolate color, same as your other widgets
+    text="󰣀",  # Choose a suitable icon (here's an SSH-related icon)
+    fontsize=40,
+    foreground='000000',
+    background="#B4BEFE", **powerlineright,
     mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh"))},
 )
 
@@ -172,7 +208,8 @@ def get_current_user():
 
 current_user_widget = widget.TextBox(
     text=get_current_user(),
-    foreground='#ffe135',  # Choose your desired color
+    foreground='000000',
+    background="#45475A", **powerlineright,
 )
    
 #############################################################
@@ -180,35 +217,37 @@ current_user_widget = widget.TextBox(
 #############################################################
 def init_widgets_list():
     widgets_list = [
-            widget.Spacer(length=10),
+            widget.Spacer(length=8),
             widget.TextBox(
-                text=" ",
-                foreground='#00ffff',  # Aqua
-                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))}
+                text="",
+		fontsize=15,
+                foreground='000000',
+                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))},
+                background="#313244", **powerline,
             ),
-            widget.Spacer(length=10),
             widget.Clock(
-                foreground='#4666ff',  # Neon Blue
+                foreground='000000',
+                background="#E8A2AF", **powerline,
                 format="  %a %d-%m-%Y",
             ),
-            widget.Spacer(length=10),
             widget.Clock(
-                foreground='#ffe135',  # Banana Yellow
+                foreground='000000',
                 format="  %I:%M:%S %p",
+                background="#FAE3B0", **powerline,
             ),
-            widget.Spacer(length=10),
             widget.CPU(
-                format='   {load_percent}%',
-                foreground='#ff5800',  # Orange (Crayola)
+                format=' {load_percent}%',
+                foreground='000000',
+                background="#A6E3A1", **powerline,
             ),
-            widget.Spacer(length=10),
             widget.Memory(
-                foreground='#ccff00',  # Electric Lime
-                format='   {MemPercent}%'
+                foreground='000000',
+                format=' {MemPercent}%',
+                background="#9399B2", **powerline,
             ),
-            widget.Spacer(length=10),
             widget.WindowName(
-                foreground='#39ff14',  # Neon Green
+                foreground='000000',
+                background="#F5C2E7", **powerline,
                 scroll=True,
                 scroll_delay=2,
                 scroll_interval=0.1,
@@ -216,43 +255,59 @@ def init_widgets_list():
                 scroll_repeat=True,
                 scroll_clear=False,
                 scroll_fixed_width=True,
-                width=200,
+                width=100,
             ),
             widget.Spacer(),
+            widget.Spacer(length=1, background="#1e1e2e59", **powerlineroundedright), # Same Colour as the bar
+            widget.Spacer(length=1, background="#585B70", **powerlineroundedright),
             widget.GroupBox(
-                active='#ffd700',  # Gold1
+                highlight_method='line',
+                highlight_color=["#D20F39"],
+                background="#585B70", **powerlineroundedleft
             ),
             widget.Spacer(),
-            widget.Systray(),
-            widget.Spacer(length=20),
-            widget.CurrentLayout(
-                foreground='#fc74fd',  # Pink Flamingo
+            widget.Systray(
+                background="#BAC2DE", **powerlineright,
             ),
-            widget.Spacer(length=10),
+            widget.CurrentLayout(
+                fmt=" {}",
+                foreground='000000',
+                background="#EA999C", **powerlineright,
+            ),
             BrightnessWidget(),
             VolumeWidget(),
             nerd_dictation(),
-            widget.Spacer(length=10),
-            widget.CheckUpdates(
-                distro="Arch",
-                colour_have_updates='#f38fa9',
-                colour_no_updates='#f38fa9',
-                display_format='󰇚 {updates}',
+            widget.GenPollText(
+                name="updates",
+                update_interval=30,
+                func=lambda: (
+                    " NoUpdates" if subprocess.check_output(
+                        ["/home/chris/.config/qtile/scripts/OpenFlexOS_UpdateCheck.sh"]
+                    ).decode("utf-8").strip() == "0"
+                    else "󰇚 " + subprocess.check_output(
+                        ["/home/chris/.config/qtile/scripts/OpenFlexOS_UpdateCheck.sh"]
+                    ).decode("utf-8").strip()
+                ),
+                background="#E64553",
+                foreground="000000",
+                mouse_callbacks={
+                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Right Click to see updates. Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'"),
+                    'Button3': lazy.spawn("alacritty -e bash -c 'echo \"Updates Available:\"; echo \"=======================\"; echo \"Pacman Updates:\"; echo \"=======================\"; checkupdates; echo; echo \"AUR Updates:\"; echo \"=======================\"; yay -Qua; exec $SHELL'")
+                },
+                **powerlineright,
             ),
-            widget.Spacer(length=10),
+
+
             battery_widget(),
-            widget.Spacer(length=10),
-            script_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
+            nmcli_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
             ssh_widget,
-            widget.Spacer(length=10),
             current_user_widget,
             widget.TextBox(
-                text="⏻ ",
-                foreground='#00ff7f',  # SpringGreen1
+                text="",
+                foreground='000000',
+                background="#FAB387", **powerlineright,
                 mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh"))},
             ),
-            widget.Spacer(length=10),
-
         ]
     return widgets_list
 
@@ -263,13 +318,13 @@ def init_widgets_screen1():
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
     # Remove Widgets by counting the number of widgets and use the number of that widget starting from 0, EG remove first widget use 0 [0] or [0:4] below
-    # 15=systray
-    del widgets_screen2[15]
+    # 9=systray
+    del widgets_screen2[10]
     return widgets_screen2
 
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59")),
-            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59")),
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[20, 18, 0, 18], size=24, background="#1e1e2e59")),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=34, background="#1e1e2e59")),
             Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59"))]
 
 if __name__ in ["config", "__main__"]:
@@ -403,6 +458,7 @@ keys = [
     Key([alt], "q", lazy.spawn(get_script_path("OpenFlexOS_Power.sh")), desc="Powermenu"),
     Key([alt], "d", lazy.spawn(get_script_path("OpenFlexOS_Applications.sh")), desc="Menu"),
     Key([alt], "f", lazy.spawn("firefox"), desc="Launch Firefox"),
+    Key([alt], "b", lazy.spawn("brave --password-store=basic"), desc="Launch Brave"),
     Key([mod, alt], "b", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "start"]), desc="begin/start nerd dictation"),
     Key([mod, alt], "e", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "stop"]), desc="end/stop nerd dictation"),
     Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " up"), desc="Increase volume"),
@@ -429,8 +485,8 @@ mouse = [
 
 widget_defaults = dict(
     font="sans",
-    fontsize=15,
-    padding=3,
+    fontsize=12,
+    padding=2,
 )
 
 floating_layout = layout.Floating(
@@ -445,6 +501,7 @@ floating_layout = layout.Floating(
         Match(title="pinentry"),  # GPG key password entry
         Match(wm_class="Galculator"),
         Match(wm_class="zenity"),
+        Match(wm_class="tilda"),
     ]
 )
 
