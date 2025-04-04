@@ -9,7 +9,7 @@
 # ================================================================
 
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
-launcher="dmenu -i"
+launcher="dmenu -y 20 -x 20 -z 1880 -i"
 
 main_message=$(echo -e "WiFi Manager:\nWhat would you like to do?")
 main_menu=$(echo -e "󱚽 Connect to a Wifi Network\n󰖪 Enable Or Disable Wifi\n󱛅 Forget a Wifi Network" | $launcher -p "$main_message")
