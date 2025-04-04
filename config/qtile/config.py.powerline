@@ -84,6 +84,7 @@ def resize_floating_window(qtile, width: int = 0, height: int = 0):
     w = qtile.current_window
     w.cmd_set_size_floating(w.width + width, w.height + height)
 
+
 #############################################################
 ############### Class #######################################
 #############################################################
@@ -276,20 +277,27 @@ def init_widgets_list():
             BrightnessWidget(),
             VolumeWidget(),
             nerd_dictation(),
-            widget.CheckUpdates(
-                distro="Arch",
-                custom_command="checkupdates; yay -Qua",
-                colour_have_updates='000000',
-                no_update_string=' NoUpdates',
-                colour_no_updates='000000',
-                display_format='󰇚 {updates}',
-                update_interval=60,
-                background="#E64553", **powerlineright,
+            widget.GenPollText(
+                name="updates",
+                update_interval=30,
+                func=lambda: (
+                    " NoUpdates" if subprocess.check_output(
+                        ["/home/chris/.config/qtile/scripts/OpenFlexOS_UpdateCheck.sh"]
+                    ).decode("utf-8").strip() == "0"
+                    else "󰇚 " + subprocess.check_output(
+                        ["/home/chris/.config/qtile/scripts/OpenFlexOS_UpdateCheck.sh"]
+                    ).decode("utf-8").strip()
+                ),
+                background="#E64553",
+                foreground="000000",
                 mouse_callbacks={
-                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Right Click to see updates.  Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'"),
-                    'Button3': lazy.spawn("alacritty -e bash -c 'echo \"Updates Available: \"; echo \"=======================\"; echo \"Pacman Updates: \"; echo \"=======================\"; checkupdates; echo \"\"; echo \"AUR Updates: \"; echo \"=======================\"; yay -Qua; exec $SHELL'")
-                }
+                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Right Click to see updates. Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'"),
+                    'Button3': lazy.spawn("alacritty -e bash -c 'echo \"Updates Available:\"; echo \"=======================\"; echo \"Pacman Updates:\"; echo \"=======================\"; checkupdates; echo; echo \"AUR Updates:\"; echo \"=======================\"; yay -Qua; exec $SHELL'")
+                },
+                **powerlineright,
             ),
+
+
             battery_widget(),
             nmcli_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
             ssh_widget,
@@ -315,7 +323,7 @@ def init_widgets_screen2():
     return widgets_screen2
 
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59")),
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), margin=[20, 18, 0, 18], size=24, background="#1e1e2e59")),
             Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=34, background="#1e1e2e59")),
             Screen(top=bar.Bar(widgets=init_widgets_screen2(), margin=[10, 13, 0, 13], size=24, background="#1e1e2e59"))]
 
