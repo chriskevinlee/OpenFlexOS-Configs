@@ -14,7 +14,7 @@ SSH_DIR="$HOME/.ssh"
 SERVER_LIST="$SSH_DIR/servers.txt"
 
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
-launcher="dmenu -i"
+launcher="dmenu -y 20 -x 20 -z 1880 -i"
 
 # Check if the SSH directory exists; if not, create it silently
 if [[ ! -d "$SSH_DIR" ]]; then
