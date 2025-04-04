@@ -3,7 +3,7 @@
 source /home/$USER/.config/qtile/scripts/OpenFlexOS_Sounds.sh
 
 #launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
-launcher="dmenu -i"
+launcher="dmenu -y 20 -x 20 -z 1880 -i"
 
 # Use yes or no to enable or disable countdown
 enable_countdown=yes
