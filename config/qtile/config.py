@@ -291,18 +291,23 @@ def init_widgets_list():
                 name="updates",
                 update_interval=30,
                 func=lambda: (
-                    " NoUpdates" if subprocess.check_output(
-                        ["/home/chris/.config/qtile/scripts/OpenFlexOS_UpdateCheck.sh"]
+                    " NoUpdates"
+                    if subprocess.check_output(
+                        [get_script_path("OpenFlexOS_UpdateCheck.sh")]
                     ).decode("utf-8").strip() == "0"
                     else "󰇚 " + subprocess.check_output(
-                        ["/home/chris/.config/qtile/scripts/OpenFlexOS_UpdateCheck.sh"]
+                        [get_script_path("OpenFlexOS_UpdateCheck.sh")]
                     ).decode("utf-8").strip()
                 ),
                 background="#E64553",
                 foreground="000000",
                 mouse_callbacks={
-                    'Button1': lazy.spawn("alacritty -e bash -c 'echo \"Right Click to see updates. Running Updates for Arch and AUR\"; sudo pacman -Syu; yay -Syu; exec $SHELL'"),
-                    'Button3': lazy.spawn("alacritty -e bash -c 'echo \"Updates Available:\"; echo \"=======================\"; echo \"Pacman Updates:\"; echo \"=======================\"; checkupdates; echo; echo \"AUR Updates:\"; echo \"=======================\"; yay -Qua; exec $SHELL'")
+                    'Button1': lambda: qtile.cmd_spawn(
+                        "alacritty -e bash -c 'echo \"Right Click to see updates\"; sleep 3'"
+                    ),
+                    'Button3': lambda: qtile.cmd_spawn(
+                        f"alacritty -e bash -c 'echo \"Updates Available:\"; {get_script_path('OpenFlexOS_UpdateCheck.sh')}; bash'"
+                    ),
                 },
                 **powerlineright,
             ),
