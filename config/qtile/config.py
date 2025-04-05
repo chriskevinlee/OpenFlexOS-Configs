@@ -220,31 +220,36 @@ def init_widgets_list():
             widget.Spacer(length=8),
             widget.TextBox(
                 text="",
-		fontsize=15,
+		          fontsize=15,
                 foreground='000000',
                 mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))},
                 background="#313244", **powerline,
             ),
+            #widget.Spacer(length=8),
             widget.Clock(
                 foreground='000000',
                 background="#E8A2AF", **powerline,
                 format="  %a %d-%m-%Y",
             ),
+            #widget.Spacer(length=8),
             widget.Clock(
                 foreground='000000',
                 format="  %I:%M:%S %p",
                 background="#FAE3B0", **powerline,
             ),
+            #widget.Spacer(length=8),
             widget.CPU(
                 format=' {load_percent}%',
                 foreground='000000',
                 background="#A6E3A1", **powerline,
             ),
+            #widget.Spacer(length=8),
             widget.Memory(
                 foreground='000000',
                 format=' {MemPercent}%',
                 background="#9399B2", **powerline,
             ),
+            #widget.Spacer(length=8),
             widget.WindowName(
                 foreground='000000',
                 background="#F5C2E7", **powerline,
@@ -269,14 +274,19 @@ def init_widgets_list():
             widget.Systray(
                 background="#BAC2DE", **powerlineright,
             ),
+            #widget.Spacer(length=8),
             widget.CurrentLayout(
                 fmt=" {}",
                 foreground='000000',
                 background="#EA999C", **powerlineright,
             ),
+            #widget.Spacer(length=8),
             BrightnessWidget(),
+            #widget.Spacer(length=8),
             VolumeWidget(),
+            #widget.Spacer(length=8),
             nerd_dictation(),
+            #widget.Spacer(length=8),
             widget.GenPollText(
                 name="updates",
                 update_interval=30,
@@ -296,12 +306,14 @@ def init_widgets_list():
                 },
                 **powerlineright,
             ),
-
-
             battery_widget(),
+            #widget.Spacer(length=8),
             nmcli_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
+            #widget.Spacer(length=8),
             ssh_widget,
+            #widget.Spacer(length=8),
             current_user_widget,
+            #widget.Spacer(length=8),
             widget.TextBox(
                 text="",
                 foreground='000000',
@@ -318,7 +330,7 @@ def init_widgets_screen1():
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
     # Remove Widgets by counting the number of widgets and use the number of that widget starting from 0, EG remove first widget use 0 [0] or [0:4] below
-    # 9=systray
+    # 10=systray
     del widgets_screen2[10]
     return widgets_screen2
 
