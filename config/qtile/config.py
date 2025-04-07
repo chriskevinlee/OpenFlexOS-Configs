@@ -220,7 +220,7 @@ def init_widgets_list():
             widget.Spacer(length=8),
             widget.TextBox(
                 text="",
-		          fontsize=15,
+                  fontsize=15,
                 foreground='000000',
                 mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))},
                 background="#313244", **powerline,
@@ -303,10 +303,18 @@ def init_widgets_list():
                 foreground="000000",
                 mouse_callbacks={
                     'Button1': lambda: qtile.cmd_spawn(
-                        "alacritty -e bash -c 'echo \"Right Click to see updates\"; sleep 3'"
+                        "alacritty -e bash -c 'echo \"Right Click to see updates\"; yay -Syu; exec bash'"
                     ),
                     'Button3': lambda: qtile.cmd_spawn(
-                        f"alacritty -e bash -c 'echo \"Updates Available:\"; {get_script_path('OpenFlexOS_UpdateCheck.sh')}; bash'"
+                        "alacritty -e bash -c '"
+                        "echo \"================\"; "
+                        "echo \"Pacman Updates\"; "
+                        "echo \"================\"; "
+                        "checkupdates; "
+                        "echo \"================\"; "
+                        "echo \"AUR Updates\"; "
+                        "echo \"================\"; "
+                        "exec bash'"
                     ),
                 },
                 **powerlineright,
