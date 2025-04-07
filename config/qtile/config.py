@@ -303,7 +303,7 @@ def init_widgets_list():
                 foreground="000000",
                 mouse_callbacks={
                     'Button1': lambda: qtile.cmd_spawn(
-                        "alacritty -e bash -c 'echo \"Right Click to see updates\"; pacman -Syu; yay -Syu; exec bash'"
+                        "alacritty -e bash -c 'echo \"Right Click to see updates\"; sudo pacman -Syu; yay -Syu; exec bash'"
                     ),
                     'Button3': lambda: qtile.cmd_spawn(
                         "alacritty -e bash -c '"
