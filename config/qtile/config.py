@@ -303,23 +303,38 @@ def init_widgets_list():
                 foreground="000000",
                 mouse_callbacks={
                     'Button1': lambda: qtile.cmd_spawn(
-                        "alacritty -e bash -c 'echo \"Right Click to see updates\"; sudo pacman -Syu; yay -Syu; exec bash'"
+                        "alacritty -e bash -c '"
+                        "echo \"Right Click to See updates\"; "
+                        "if command -v pacman >/dev/null; then "
+                            "sudo pacman -Syu && yay -Syu; "
+                        "elif command -v apt >/dev/null; then "
+                            "sudo apt update && sudo apt upgrade; "
+                        "else echo \"Unsupported system\"; "
+                        "fi; exec bash'"
                     ),
                     'Button3': lambda: qtile.cmd_spawn(
                         "alacritty -e bash -c '"
-                        "echo \"================\"; "
-                        "echo \"Pacman Updates\"; "
-                        "echo \"================\"; "
-                        "checkupdates; "
-                        "echo \"================\"; "
-                        "echo \"AUR Updates\"; "
-                        "echo \"================\"; "
-                        "exec bash'"
+                        "if command -v pacman >/dev/null; then "
+                            "echo \"================\"; "
+                            "echo \"Pacman Updates\"; "
+                            "echo \"================\"; "
+                            "checkupdates; "
+                            "echo \"================\"; "
+                            "echo \"AUR Updates\"; "
+                            "echo \"================\"; "
+                            "yay -Qua; "
+                        "elif command -v apt >/dev/null; then "
+                            "echo \"================\"; "
+                            "echo \"APT Updates\"; "
+                            "echo \"================\"; "
+                            "apt list --upgradable; "
+                        "else echo \"Unsupported system\"; "
+                        "fi; exec bash'"
                     ),
                 },
                 **powerlineright,
             ),
-            battery_widget(),
+battery_widget(),
             #widget.Spacer(length=8),
             nmcli_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
             #widget.Spacer(length=8),
