@@ -78,7 +78,7 @@ case "$chosen" in
                     if [[ "$active_sounds" = yes && ! -z "$reboot_sound" && -f "${sounds_dir}${reboot_sound}" ]]; then
                         mpv --no-video "${sounds_dir}${reboot_sound}" && reboot
                     else
-                        reboot
+                        systemctl reboot
                     fi
                 else
                     exit
@@ -129,7 +129,7 @@ case "$chosen" in
                     if [[ "$active_sounds" = yes && ! -z "$poweroff_sound" && -f "${sounds_dir}${poweroff_sound}" ]]; then
                         mpv --no-video "${sounds_dir}${poweroff_sound}" && poweroff
                     else
-                        poweroff
+                        systemctl poweroff
                     fi
                 else
                     exit
