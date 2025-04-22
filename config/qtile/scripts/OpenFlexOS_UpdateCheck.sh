@@ -1,5 +1,7 @@
 #!/bin/bash
 
+updates_icon="󰁅"
+
 # Detect package manager
 if command -v checkupdates >/dev/null 2>&1 && command -v yay >/dev/null 2>&1; then
     # Arch-based system
@@ -16,8 +18,60 @@ else
     total=0
 fi
 
-# Output total number of updates
-printf "%d" "$total"
 
-exit 0
+while getopts "uvh" main 2>/dev/null; do
+    case "${main}" in
+        u)
+            alacritty -e bash -c '
+                echo "Right Click to See updates";
+                if command -v pacman >/dev/null; then
+                    sudo pacman -Syu && yay -Syu;
+                elif command -v apt >/dev/null; then
+                    sudo apt update && sudo apt upgrade;
+                else
+                    echo "Unsupported system";
+                fi;
+                exec bash'
+            ;;
+        v)
+            alacritty -e bash -c '
+                if command -v pacman >/dev/null; then
+                    echo "================";
+                    echo "Pacman Updates";
+                    echo "================";
+                    checkupdates;
+                    echo "================";
+                    echo "AUR Updates";
+                    echo "================";
+                    yay -Qua;
+                elif command -v apt >/dev/null; then
+                    echo "================";
+                    echo "APT Updates";
+                    echo "================";
+                    apt list --upgradable;
+                else
+                    echo "Unsupported system";
+                fi;
+                exec bash'
+            ;;
+        h)
+            echo "A script to view pacman,apt updates and to be able to run the updates"
+            echo "Usage: $(basename "$0") [ARGUMENT]"
+            echo ""
+            echo "Opens a new termial window, designed with the idea to work with left/right click on panels"
+            printf "%-30s %s\n" " -u" "Run update with apt or pacman"
+            printf "%-30s %s\n" " -v" "View updates with apt or pacman"
+            ;;
+        *)
+            echo "Please see $(basename "$0") -h for help"
+            exit 1
+            ;;
+    esac
+    exit 0
+done
+
+
+# Output total number of updates
+printf "%s %d\n" "$updates_icon" "$total"
+
 

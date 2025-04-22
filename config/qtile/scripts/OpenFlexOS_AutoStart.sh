@@ -46,6 +46,12 @@ else
     echo "Wallpaper config file is missing or empty."
 fi
 
+
+
+
+
+
+
 # Loads the login sound and plays a login sound at login
 source /home/$USER/.config/qtile/scripts/OpenFlexOS_Sounds.sh
 if [[ ! -z "$login_sound" ]]; then
@@ -64,13 +70,10 @@ fi
 # Start Applicatiosn at login
 flameshot &
 xscreensaver -no-splash &
-conky -c ~/.config/qtile/conky/conky.conf &
 picom &
-
+tilda &
 
 # Start Scripts at Login
 /home/$USER/.config/qtile/scripts/OpenFlexOS_BatteryHibernate.sh &
-# Set wallpaper every 30 minutes
-#/usr/local/bin/OpenFlexOS_WallpaperChanger.sh random 30m
-# Set wallpaper at login
-#/usr/local/bin/OpenFlexOS_WallpaperChanger.sh random
+
+OpenFlexOS_WallpaperChanger.sh -b 5m
