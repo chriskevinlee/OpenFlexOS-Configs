@@ -6,7 +6,7 @@ import subprocess
 import threading
 import time
 from libqtile import bar, layout, qtile, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 from libqtile import hook
@@ -421,7 +421,30 @@ wmname = "LG3D"
 #############################################################
 ############### KeyBindings #################################
 #############################################################
+
 keys = [
+
+# My Key Chords
+    KeyChord([alt], "a", [
+        Key([], "d", lazy.spawn(get_script_path("OpenFlexOS_Applications.sh") + " -d"), desc="Dmenu"),
+        Key([], "r", lazy.spawn(get_script_path("OpenFlexOS_Applications.sh") + " -r"), desc="Rofi"),
+    ], mode="Launcher"),
+
+    KeyChord([alt], "p", [
+        Key([], "d", lazy.spawn(get_script_path("OpenFlexOS_Power.sh") + " -d"), desc="Dmenu"),
+        Key([], "r", lazy.spawn(get_script_path("OpenFlexOS_Power.sh") + " -r"), desc="Rofi"),
+    ], mode="Power"),
+
+    KeyChord([alt], "s", [
+        Key([], "d", lazy.spawn(get_script_path("OpenFlexOS_SSH.sh") + " -d"), desc="Dmenu"),
+        Key([], "r", lazy.spawn(get_script_path("OpenFlexOS_SSH.sh") + " -r"), desc="Rofi"),
+    ], mode="SSH"),
+
+    KeyChord([alt], "n", [
+        Key([], "d", lazy.spawn(get_script_path("OpenFlexOS_Network.sh") + " -d"), desc="Dmenu"),
+        Key([], "r", lazy.spawn(get_script_path("OpenFlexOS_Network.sh") + " -r"), desc="Rofi"),
+    ], mode="Network"),
+
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
 
@@ -481,8 +504,6 @@ keys = [
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 
     # Start of My Config: setting my own keys
-    Key([alt], "q", lazy.spawn(get_script_path("OpenFlexOS_Power.sh")), desc="Powermenu"),
-    Key([alt], "d", lazy.spawn(get_script_path("OpenFlexOS_Applications.sh")), desc="Menu"),
     Key([alt], "f", lazy.spawn("firefox"), desc="Launch Firefox"),
     Key([alt], "b", lazy.spawn("brave --password-store=basic"), desc="Launch Brave"),
     Key([mod, alt], "b", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "start"]), desc="begin/start nerd dictation"),
