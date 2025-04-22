@@ -76,7 +76,7 @@ def battery_widget():
 
 # Function to display a icon for network status. x icon disconnected, wifi for connected to wifi, Desktop pc for ethernet. see OpenFlexOS_NerdDictation.sh
 def get_nmcli_output():
-    return subprocess.check_output([get_script_path("OpenFlexOS_NetworkManagerCLI.sh")]).decode("utf-8").strip()
+    return subprocess.check_output([get_script_path("OpenFlexOS_Network.sh")]).decode("utf-8").strip()
 
 # Function for Resize Floating Windows, See "keys =" for seting Keybindings
 @lazy.function
@@ -102,10 +102,10 @@ class BrightnessWidget(TextBox):
         self.text = result.stdout.strip()
         self.draw()
     def on_left_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "up"])
+        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "-u"])
         self.brightness()
     def on_right_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "down"])
+        subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "-d"])
         self.brightness()
 
 # Function to display volume percentage and to allow left click, right click and middle click
@@ -135,13 +135,13 @@ class VolumeWidget(TextBox):
         self.text = result.stdout.strip()
         self.draw()
     def on_left_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "up"])
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-u"])
         self.update_volume()
     def on_right_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "down"])
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-d"])
         self.update_volume()
     def on_middle_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "mute"])
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-m"])
         self.update_volume()
 # Create the widget instance globally so hooks can reference it
 volume_widget = VolumeWidget()
@@ -174,10 +174,10 @@ class nerd_dictation(TextBox):
         self.text = result.stdout.strip()
         self.draw()
     def on_left_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "start"])
+        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "-s"])
         self.update_nerd_dictation()
     def on_right_click(self):
-        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "stop"])
+        subprocess.run([get_script_path("OpenFlexOS_NerdDictation.sh"), "-S"])
         self.update_nerd_dictation()
 # Create the widget instance globally so hooks can reference it
 nerddictation = nerd_dictation()
@@ -189,7 +189,10 @@ nmcli_widget = widget.GenPollText(
     func=get_nmcli_output,
     update_interval=1,
     fmt='{} ',  # You can customize the formatting here
-    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_RofiWifiMenu.sh"))},
+    mouse_callbacks={
+    'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Network.sh") + " -d"),
+    'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Network.sh") + " -r"),
+    },
     foreground='000000',
     background="#FE640B", **powerlineright,
 )
@@ -199,7 +202,10 @@ ssh_widget = widget.TextBox(
     fontsize=40,
     foreground='000000',
     background="#B4BEFE", **powerlineright,
-    mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh"))},
+    mouse_callbacks={
+    'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh") + " -d"),
+    'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_SSH.sh") + " -r"),
+    },
 )
 
 # Function to get Login User to Display on qtile bar
@@ -220,9 +226,12 @@ def init_widgets_list():
             widget.Spacer(length=8),
             widget.TextBox(
                 text="",
-                  fontsize=15,
+                fontsize=15,
                 foreground='000000',
-                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh"))},
+                mouse_callbacks={
+                    'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh") + " -d"),
+                    'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Applications.sh") + " -r"),
+                },
                 background="#313244", **powerline,
             ),
             #widget.Spacer(length=8),
@@ -302,35 +311,9 @@ def init_widgets_list():
                 background="#E64553",
                 foreground="000000",
                 mouse_callbacks={
-                    'Button1': lambda: qtile.cmd_spawn(
-                        "alacritty -e bash -c '"
-                        "echo \"Right Click to See updates\"; "
-                        "if command -v pacman >/dev/null; then "
-                            "sudo pacman -Syu && yay -Syu; "
-                        "elif command -v apt >/dev/null; then "
-                            "sudo apt update && sudo apt upgrade; "
-                        "else echo \"Unsupported system\"; "
-                        "fi; exec bash'"
-                    ),
-                    'Button3': lambda: qtile.cmd_spawn(
-                        "alacritty -e bash -c '"
-                        "if command -v pacman >/dev/null; then "
-                            "echo \"================\"; "
-                            "echo \"Pacman Updates\"; "
-                            "echo \"================\"; "
-                            "checkupdates; "
-                            "echo \"================\"; "
-                            "echo \"AUR Updates\"; "
-                            "echo \"================\"; "
-                            "yay -Qua; "
-                        "elif command -v apt >/dev/null; then "
-                            "echo \"================\"; "
-                            "echo \"APT Updates\"; "
-                            "echo \"================\"; "
-                            "apt list --upgradable; "
-                        "else echo \"Unsupported system\"; "
-                        "fi; exec bash'"
-                    ),
+                    'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -u"),
+                    'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -v"),
+
                 },
                 **powerlineright,
             ),
@@ -346,7 +329,10 @@ battery_widget(),
                 text="",
                 foreground='000000',
                 background="#FAB387", **powerlineright,
-                mouse_callbacks={'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh"))},
+                mouse_callbacks={
+                'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh") + " -d"),
+                'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Power.sh") + " -r"),
+                },
             ),
         ]
     return widgets_list
