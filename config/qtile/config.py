@@ -299,32 +299,27 @@ def init_widgets_list():
             widget.GenPollText(
                 name="updates",
                 update_interval=30,
-                func=lambda: (
-                    " NoUpdates"
-                    if subprocess.check_output(
-                        [get_script_path("OpenFlexOS_UpdateCheck.sh")]
-                    ).decode("utf-8").strip() == "0"
-                    else "󰇚 " + subprocess.check_output(
-                        [get_script_path("OpenFlexOS_UpdateCheck.sh")]
-                    ).decode("utf-8").strip()
-                ),
+                func=lambda: subprocess.run(
+                    [get_script_path("OpenFlexOS_UpdateCheck.sh")],
+                    capture_output=True,
+                    text=True
+                ).stdout.strip(),
                 background="#E64553",
-                foreground="000000",
+                foreground="#000000",
                 mouse_callbacks={
                     'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -u"),
                     'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -v"),
-
                 },
                 **powerlineright,
             ),
-battery_widget(),
+            battery_widget(),
             #widget.Spacer(length=8),
             nmcli_widget,  # (Network Widget) A Script runs and displays an icon depending on if connected to wifi, ethernet, or disconnected
             #widget.Spacer(length=8),
             ssh_widget,
             #widget.Spacer(length=8),
             current_user_widget,
-            #widget.Spacer(length=8),
+            widget.Spacer(length=8),
             widget.TextBox(
                 text="",
                 foreground='000000',
