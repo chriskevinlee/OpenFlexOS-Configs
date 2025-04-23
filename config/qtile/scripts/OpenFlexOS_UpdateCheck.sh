@@ -1,6 +1,7 @@
 #!/bin/bash
 
 updates_icon="󰁅"
+noupdates_icon=""
 
 # Detect package manager
 if command -v checkupdates >/dev/null 2>&1 && command -v yay >/dev/null 2>&1; then
@@ -17,7 +18,6 @@ elif command -v apt >/dev/null 2>&1; then
 else
     total=0
 fi
-
 
 while getopts "uvh" main 2>/dev/null; do
     case "${main}" in
@@ -70,8 +70,12 @@ while getopts "uvh" main 2>/dev/null; do
     exit 0
 done
 
-
-# Output total number of updates
-printf "%s %d\n" "$updates_icon" "$total"
-
-
+# Output update count if no flags
+if [[ "$#" -eq 0 ]]; then
+    if [[ "$total" -eq 0 ]]; then
+        echo "$noupdates_icon No Updates"
+    else
+        printf "%s %d Updates\n" "$updates_icon" "$total"
+    fi
+    exit 0
+fi
