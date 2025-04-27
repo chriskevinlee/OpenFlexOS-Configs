@@ -4,12 +4,19 @@ updates_icon="󰁅"
 noupdates_icon=""
 
 # Detect package manager
-if command -v checkupdates >/dev/null 2>&1 && command -v yay >/dev/null 2>&1; then
+if command -v checkupdates >/dev/null 2>&1; then
     # Arch-based system
     pacman_updates=$(checkupdates 2>/dev/null)
-    aur_updates=$(yay -Qua 2>/dev/null)
     count_pacman=$(echo "$pacman_updates" | grep -c '^[^[:space:]]')
-    count_aur=$(echo "$aur_updates" | grep -c '^[^[:space:]]')
+
+    # Check for yay separately
+    if command -v yay >/dev/null 2>&1; then
+        aur_updates=$(yay -Qua 2>/dev/null)
+        count_aur=$(echo "$aur_updates" | grep -c '^[^[:space:]]')
+    else
+        count_aur=0
+    fi
+
     total=$((count_pacman + count_aur))
 elif command -v apt >/dev/null 2>&1; then
     # Debian-based system
@@ -18,6 +25,7 @@ elif command -v apt >/dev/null 2>&1; then
 else
     total=0
 fi
+
 
 while getopts "uvh" main 2>/dev/null; do
     case "${main}" in
