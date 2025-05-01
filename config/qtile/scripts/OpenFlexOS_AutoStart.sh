@@ -75,5 +75,3 @@ tilda &
 
 # Start Scripts at Login
 /home/$USER/.config/qtile/scripts/OpenFlexOS_BatteryHibernate.sh &
-
-OpenFlexOS_WallpaperChanger.sh -b 5m
