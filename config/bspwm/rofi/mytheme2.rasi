@@ -1,0 +1,56 @@
+* {
+    background-color: #7F849C;
+    text-color: #000000;
+    MintGreen:#A6E3A1;
+    CherryRed:#E64553;
+    PeachCream:#F9E2AF; 
+}
+
+configuration {
+    show-icons: true;
+}
+
+window {
+    location: south west;
+    anchor:   south west;
+    width: 20%;
+    height: 97%;
+    border: 5px;
+    border-color: @PeachCream;
+    border-radius: 40px;
+}
+
+inputbar {
+border: 0px 0px 5px 0px;
+border-color: @PeachCream;
+padding: 10px;
+}
+                              
+prompt {
+ color: @MintGreen;
+}
+                                                               
+listview {
+padding: 10px;
+}
+
+element-text {
+    background-color: inherit;
+
+}
+
+element selected.normal {
+     background-color: @CherryRed;
+}
+
+entry {
+    placeholder: "Search";
+    color: @text-color;
+}
+
+error-message {
+    expand: true;
+   
+
+    padding: 1em;
+}
