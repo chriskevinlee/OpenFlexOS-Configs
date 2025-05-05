@@ -54,7 +54,7 @@ ssh_menu(){
                 ssh_menu
                 ;;
             r)
-                launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
+                launcher="rofi -config /home/$USER/.config/bspwm/rofi/config.rasi -dmenu"
                 ssh_menu
                 ;;
             h)
