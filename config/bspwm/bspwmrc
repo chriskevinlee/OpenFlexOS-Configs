@@ -1,14 +1,7 @@
 #! /bin/sh
-polybar -c /home/chris/.config/bspwm/polybar/config.ini &
-xrandr -s 1920x1080 &
-sxhkd &
-flameshot &
-xscreensaver -no-splash &
-#picom &
-tilda &
 
-
-
+# See file autostart.sh for applicatiosn that start at login
+source autostart.sh
 
 ### For singal wallpaper
 # Create a config file if it dont exists, saves the wallpaper the user selected and applies the wallpaper at login
@@ -21,7 +14,6 @@ if [ -s "$CONFIG_FILE" ]; then
   # Apply the wallpaper using feh
   feh --bg-scale "$SELECTED_WALLPAPER" &
 fi
-
 
 ## For multi wallpaper
 # Define the wallpaper configuration file
@@ -48,26 +40,14 @@ else
     echo "Wallpaper config file is missing or empty."
 fi
 
-
-
-
-
 # Loads the login sound and plays a login sound at login
 source /home/$USER/.config/bspwm/scripts/OpenFlexOS_Sounds.sh
 if [[ ! -z "$login_sound" ]]; then
     mpv --no-video "${sounds_dir}${login_sound}" &
 fi
 
-
-
-
-
+# Starts a script to monitor battery, when low it gives a warrning or hibernates the system
 /home/$USER/.config/qtile/scripts/OpenFlexOS_BatteryHibernate.sh &
-
-
-
-
-
 
 pgrep -x sxhkd  > /dev/null || sxhkd -c /home/chris/.config/bspwm/sxhkdrc &
 
@@ -87,10 +67,13 @@ bspc rule -a mplayer2 state=floating
 bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
 
-
-
-
 bspc node -t floating
 
 bspc rule -a zenity \
      state=floating sticky=on follow=off focus=on \
+
+bspc rule -a Galculator \
+     state=floating sticky=on follow=off focus=on \     
+
+bspc rule -a tilda \
+     state=floating sticky=on follow=off focus=on \     
