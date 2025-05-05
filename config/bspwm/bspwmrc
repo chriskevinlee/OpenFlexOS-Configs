@@ -1,7 +1,12 @@
 #! /bin/sh
-
-# See file autostart.sh for applicatiosn that start at login
-source autostart.sh
+# Autostart
+polybar -c /home/chris/.config/bspwm/polybar/config.ini &
+xrandr -s 1920x1080 &
+sxhkd &
+flameshot &
+xscreensaver -no-splash &
+picom &
+tilda &
 
 ### For singal wallpaper
 # Create a config file if it dont exists, saves the wallpaper the user selected and applies the wallpaper at login
