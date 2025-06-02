@@ -4,7 +4,7 @@
         Copy the file to $HOME/.config/openbox/ instead. -->
 
 <openbox_config xmlns="http://openbox.org/3.4/rc"
-		xmlns:xi="http://www.w3.org/2001/XInclude">
+    xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <resistance>
   <strength>10</strength>
@@ -191,27 +191,31 @@
 
 <keyboard>
   <chainQuitKey>C-g</chainQuitKey>
-
    <!-- My Keybindings -->
+
+  <!-- Applications -->
+  <!-- Open Firefox -->
   <keybind key="A-F">
       <action name="Execute">
           <command>firefox</command>
       </action>
   </keybind>
 
+  <!-- Open Terminal Alacritty -->
   <keybind key="W-Return">
       <action name="Execute">
           <command>alacritty</command>
       </action>
   </keybind>
 
-
+  <!-- Open File Manager Caja -->
   <keybind key="A-C">
       <action name="Execute">
           <command>caja</command>
       </action>
   </keybind>
 
+  <!-- Close Window -->
 <keybind key="W-W">
   <action name="Close"/>
 </keybind>
@@ -286,8 +290,6 @@
     <action name="Iconify"/>
 </keybind>
 
-
-
 <keybind key="W-KP_Enter">        <!-- Centered 40% Window -->
     <action name="UnmaximizeFull"/>
     <action name="MoveResizeTo">
@@ -296,6 +298,7 @@
     </action>
 </keybind>
 
+<!-- Switch Workspaces Desktops -->
 <keybind key="W-1">
   <action name="Desktop">
     <desktop>1</desktop>
@@ -316,6 +319,52 @@
     <desktop>4</desktop>
   </action>
 </keybind>
+
+<!-- KeyChords KeyChains -->
+<keybind key="A-A">
+  <keybind key="D">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Applications.sh -d</command>
+    </action>
+  </keybind>
+
+  <keybind key="R">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Applications.sh -r</command>
+    </action>
+  </keybind>
+</keybind>
+
+<keybind key="A-N">
+  <keybind key="D">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Network.sh -d</command>
+    </action>
+  </keybind>
+
+  <keybind key="R">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Network.sh -r</command>
+    </action>
+  </keybind>
+</keybind>
+
+<keybind key="A-P">
+  <keybind key="D">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Power.sh -d</command>
+    </action>
+  </keybind>
+
+  <keybind key="R">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Power.sh -r</command>
+    </action>
+  </keybind>
+</keybind>
+
+
+
 
   <!-- Keybindings for desktop switching -->
   <keybind key="C-A-Left">
