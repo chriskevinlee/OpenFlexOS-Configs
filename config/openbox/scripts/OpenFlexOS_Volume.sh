@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # ================================================================
-# Description: Volume and media control (up/down/mute)
+# OpenFlexOS Universal Volume Script
 # Author: Chris Lee, ChatGPT
-# Dependencies: pipewire-pulse, dunstify
-# Usage: ./OpenFlexOS_Volume.sh -u | -d | -m | no args to show status
+# Description: Adjusts system volume and works with all output types (speakers, HDMI, headphones, etc.)
 # ================================================================
 
 volume_icon="󰕾"
@@ -13,73 +12,83 @@ volume_decrease="-10%"
 volume_mute="toggle"
 notification_id=6534
 
-# Get default sink name
-get_default_sink() {
-    pactl info | grep 'Default Sink' | cut -d ':' -f2 | xargs
+# Get default, running, or fallback sink
+get_active_sink() {
+    # 1. Try default sink
+    default_sink=$(pactl info | grep "Default Sink" | awk '{print $3}')
+    if [ -n "$default_sink" ]; then
+        echo "$default_sink"
+        return
+    fi
+
+    # 2. Try sink that is RUNNING
+    running_sink=$(pactl list short sinks | grep RUNNING | awk '{print $2}' | head -n 1)
+    if [ -n "$running_sink" ]; then
+        echo "$running_sink"
+        return
+    fi
+
+    # 3. Fallback to first available sink
+    fallback_sink=$(pactl list short sinks | awk '{print $2}' | head -n 1)
+    echo "$fallback_sink"
 }
 
-# Get current volume of default sink
+# Get volume of active sink
 get_current_volume() {
-    default_sink=$(get_default_sink)
-    pactl list sinks | awk -v sink="$default_sink" '
-        $0 ~ "Name: "sink {found=1}
-        found && /Volume:/ {print $5; exit}
-    '
+    pactl get-sink-volume "$1" | awk '{print $5}' | head -n1
 }
 
-# Get mute status of default sink
+# Get mute status of active sink
 get_mute_status() {
-    default_sink=$(get_default_sink)
-    pactl list sinks | awk -v sink="$default_sink" '
-        $0 ~ "Name: "sink {found=1}
-        found && /Mute:/ {print $2; exit}
-    '
+    pactl get-sink-mute "$1" | awk '{print $2}'
 }
 
-while getopts "udmh" main 2>/dev/null; do
-    case "${main}" in
+# Detect active sink
+sink=$(get_active_sink)
+
+# Handle options
+while getopts "udmh" opt 2>/dev/null; do
+    case "${opt}" in
         u)
-            pactl set-sink-volume @DEFAULT_SINK@ "$volume_increase"
-            current_volume=$(get_current_volume)
-            dunstify -r "$notification_id" "Volume Control" "$current_volume"
+            pactl set-sink-volume "$sink" "$volume_increase"
+            vol=$(get_current_volume "$sink")
+            dunstify -r "$notification_id" "Volume Control" "$vol"
             ;;
         d)
-            pactl set-sink-volume @DEFAULT_SINK@ "$volume_decrease"
-            current_volume=$(get_current_volume)
-            dunstify -r "$notification_id" "Volume Control" "$current_volume"
+            pactl set-sink-volume "$sink" "$volume_decrease"
+            vol=$(get_current_volume "$sink")
+            dunstify -r "$notification_id" "Volume Control" "$vol"
             ;;
         m)
-            pactl set-sink-mute @DEFAULT_SINK@ "$volume_mute"
-            mute_status=$(get_mute_status)
-            if [ "$mute_status" = "yes" ]; then
+            pactl set-sink-mute "$sink" "$volume_mute"
+            mute=$(get_mute_status "$sink")
+            if [ "$mute" = "yes" ]; then
                 dunstify -r "$notification_id" "Volume Control" "Muted"
             else
-                current_volume=$(get_current_volume)
-                dunstify -r "$notification_id" "Volume Control" "$current_volume"
+                dunstify -r "$notification_id" "Volume Control" "Unmuted"
             fi
             ;;
         h)
-            echo "A script to manage volume up, down and mute"
-            echo "Usage: $(basename "$0") [ARGUMENT]"
-            echo ""
-            printf "%-30s %s\n" " -u" "Volume up"
-            printf "%-30s %s\n" " -d" "Volume down"
-            printf "%-30s %s\n" " -m" "Toggle mute"
+            echo "Usage: $(basename "$0") [-u|-d|-m|-h]"
+            echo "  -u  Volume Up"
+            echo "  -d  Volume Down"
+            echo "  -m  Mute/Unmute"
+            echo "  -h  Help"
             ;;
         *)
-            echo "Please see $(basename "$0") -h for help"
+            echo "Invalid option. Use -h for help."
             exit 1
             ;;
     esac
     exit 0
 done
 
-# If no args, show current volume or muted status
-current_volume=$(get_current_volume)
-mute_status=$(get_mute_status)
+# No option: display current volume
+mute=$(get_mute_status "$sink")
+vol=$(get_current_volume "$sink")
 
-if [ "$mute_status" = "yes" ]; then
+if [ "$mute" = "yes" ]; then
     echo "$volume_icon Muted"
 else
-    echo "$volume_icon $current_volume"
+    echo "$volume_icon $vol"
 fi
