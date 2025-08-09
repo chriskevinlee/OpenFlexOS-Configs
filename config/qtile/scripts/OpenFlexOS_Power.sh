@@ -4,7 +4,7 @@ power_icon="⏻"
 echo $power_icon
 
 power(){
-    source /home/$USER/.config/qtile/scripts/OpenFlexOS_Sounds.sh
+    source /home/$USER/.config/openbox/scripts/OpenFlexOS_Sounds.sh
 
     # Use yes or no to enable or disable countdown
     enable_countdown=yes
@@ -15,25 +15,35 @@ power(){
     chosen=$(printf " Lock\n󰍃 Logout\n󰜉 Reboot\n Suspend\n Hibernate\n⏻ PowerOff\n" | $launcher -p "Power")
 
     countdown_timer() {
-            if [[ "$enable_countdown" != "yes" ]]; then
-            return 0  # Skip countdown if disabled
-            fi
-        # Create a zenity countdown window with a "Cancel" button
+        if [[ "$enable_countdown" != "yes" ]]; then
+            return 0
+        fi
+
+        start=$(date +%s)
+        end=$(( start + countdown ))
+
         (
-        for ((i = countdown; i > 0; i--)); do
-            echo "# $chosen in: $i"
-            sleep 1
+        while [ $(date +%s) -lt $end ]; do
+            remaining=$(( end - $(date +%s) ))
+            percent=$(( 100 * (countdown - remaining) / countdown ))
+            echo "$percent"
+            echo "# $chosen in: $remaining"
+            sleep 0.2
         done
+        echo "100"
+        ) | zenity --progress \
+            --title="$chosen" \
+            --text="$chosen will occur in $countdown seconds" \
+            --percentage=0 \
+            --auto-close --width=300
 
-        ) | zenity --progress --title="$chosen" --text="$chosen will occur in 10 seconds" --percentage=0 --auto-close --width=300
-
-        # Check if zenity was canceled by inspecting the exit status
         if [ $? -eq 1 ]; then
             zenity --info --text="$chosen canceled." --title="$chosen"
             return 1
         fi
         return 0
     }
+
 
     case "$chosen" in
         " Lock")
@@ -60,9 +70,9 @@ power(){
                 [yes]* )
                     if countdown_timer; then
                         if [[ "$active_sounds" = yes && ! -z "$logout_sound" && -f "${sounds_dir}${logout_sound}" ]]; then
-                            mpv --no-video "${sounds_dir}${logout_sound}" && qtile cmd-obj -o cmd -f shutdown
+                            mpv --no-video "${sounds_dir}${logout_sound}" && openbox --exit
                         else
-                            qtile cmd-obj -o cmd -f shutdown
+                            openbox --exit
                         fi
                     else
                         exit
@@ -148,7 +158,7 @@ power(){
                 power
                 ;;
             r)
-                launcher="rofi -config /home/$USER/.config/qtile/rofi/config.rasi -dmenu"
+                launcher="rofi -config /home/$USER/.config/openbox/rofi/config.rasi -dmenu"
                 power
                 ;;
             h)
