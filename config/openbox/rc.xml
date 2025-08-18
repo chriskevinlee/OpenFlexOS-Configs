@@ -298,6 +298,22 @@
     </action>
 </keybind>
 
+<keybind key="XF86AudioRaiseVolume">
+    <action name="Execute">
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh -u</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioLowerVolume">
+    <action name="Execute">
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh -d</command>
+    </action>
+</keybind>
+<keybind key="XF86AudioMute">
+    <action name="Execute">
+        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh -m</command>
+    </action>
+</keybind>
+
 <!-- Switch Workspaces Desktops -->
 <keybind key="W-1">
   <action name="Desktop">
