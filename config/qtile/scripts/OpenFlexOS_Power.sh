@@ -70,9 +70,9 @@ power(){
                 [yes]* )
                     if countdown_timer; then
                         if [[ "$active_sounds" = yes && ! -z "$logout_sound" && -f "${sounds_dir}${logout_sound}" ]]; then
-                            mpv --no-video "${sounds_dir}${logout_sound}" && openbox --exit
+                            mpv --no-video "${sounds_dir}${logout_sound}" && qtile cmd-obj -o cmd -f shutdown
                         else
-                            openbox --exit
+                            qtile cmd-obj -o cmd -f shutdown
                         fi
                     else
                         exit
