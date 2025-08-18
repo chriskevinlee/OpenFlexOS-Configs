@@ -487,7 +487,7 @@ keys = [
 	Key([mod, alt], "e", lazy.spawn([get_script_path("OpenFlexOS_NerdDictation.sh "), "stop"]), desc="end/stop nerd dictation"),
     Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " -u"), desc="Increase volume"),
     Key([], "XF86AudioLowerVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " -d"), desc="Decrease volume"),
-    Key([], "XF86AudioMute", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " mute"), desc="Mute/Unmute"),
+    Key([], "XF86AudioMute", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " -m"), desc="Mute/Unmute"),
 	
 	# Key Chord for Applications Menu
 	KeyChord([alt], "a", [
