@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # ================================================================
-# Description: This script allows media control including volume up, down, mute, play next/prev.
+# Description: Media/volume control script with notifications
 # Author: Chris Lee, ChatGPT
 # Dependencies: pipewire-pulse, dunstify
-# Usage: Add to a panel or bar or run ./volume.sh -u|-d|-m|-h
+# Usage: ./OpenFlexOS_Volume.sh -u|-d|-m|-h
 # ================================================================
 
 volume_icon="󰕾"
@@ -25,7 +25,6 @@ get_current_volume() {
     pactl list sinks | awk -v sink="$sink" '
         $0 ~ "Name: " sink {found=1}
         found && /Volume:/ {
-            # Print the volume percentage of the first channel
             for(i=1; i<=NF; i++) {
                 if($i ~ /%/) {
                     print $i
@@ -46,26 +45,39 @@ get_mute_status() {
     '
 }
 
+# Print current state (helper)
+print_status() {
+    local current_volume mute_status
+    current_volume=$(get_current_volume)
+    mute_status=$(get_mute_status)
+
+    if [ "$mute_status" = "yes" ]; then
+        echo "$volume_icon Muted"
+    else
+        echo "$volume_icon $current_volume"
+    fi
+}
+
 while getopts "udmh" opt 2>/dev/null; do
     case "${opt}" in
         u)
             pactl set-sink-volume @DEFAULT_SINK@ "$volume_increase"
-            current_volume=$(get_current_volume)
-            dunstify -r "$notification_id" "Volume Control" "$current_volume"
+            dunstify -r "$notification_id" "Volume Control" "$(get_current_volume)"
+            print_status
             ;;
         d)
             pactl set-sink-volume @DEFAULT_SINK@ "$volume_decrease"
-            current_volume=$(get_current_volume)
-            dunstify -r "$notification_id" "Volume Control" "$current_volume"
+            dunstify -r "$notification_id" "Volume Control" "$(get_current_volume)"
+            print_status
             ;;
         m)
             pactl set-sink-mute @DEFAULT_SINK@ "$volume_mute"
-            mute_status=$(get_mute_status)
-            if [ "$mute_status" = "yes" ]; then
+            if [ "$(get_mute_status)" = "yes" ]; then
                 dunstify -r "$notification_id" "Volume Control" "Muted"
             else
                 dunstify -r "$notification_id" "Volume Control" "Unmuted"
             fi
+            print_status
             ;;
         h)
             echo "A script to manage volume up, down, and mute"
@@ -84,12 +96,5 @@ while getopts "udmh" opt 2>/dev/null; do
     exit 0
 done
 
-# If no options provided, show current volume and mute status
-current_volume=$(get_current_volume)
-mute_status=$(get_mute_status)
-
-if [ "$mute_status" = "yes" ]; then
-    echo "$volume_icon Muted"
-else
-    echo "$volume_icon $current_volume"
-fi
+# No args → just print current status
+print_status
