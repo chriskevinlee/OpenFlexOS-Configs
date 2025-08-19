@@ -110,24 +110,42 @@ class BrightnessWidget(TextBox):
 		self.brightness()
 
 class VolumeWidget(TextBox):
-	def __init__(self):
-		super().__init__(foreground=colors["background"], background=colors["green"], padding=8, )
-		self.volume()
-		# Add callbacks to the widget
-		self.add_callbacks({'Button1': self.on_left_click, 'Button2': self.on_middle_click, 'Button3': self.on_right_click})
-	def volume(self):
-		result = subprocess.run([get_script_path("OpenFlexOS_Volume.sh")], capture_output=True, text=True)
-		self.text = result.stdout.strip()
-		self.draw()
-	def on_left_click(self):
-		subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-u"])
-		self.volume()
-	def on_middle_click(self):
-		subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-m"])
-		self.volume()
-	def on_right_click(self):
-		subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-d"])
-		self.volume()
+    def __init__(self):
+        super().__init__(foreground=colors["background"], background=colors["green"], padding=8)
+        self.update_interval = 1  # refresh every 1s
+        self.volume()
+        self._schedule_refresh()
+
+        # Mouse callbacks
+        self.add_callbacks({
+            'Button1': self.on_left_click,
+            'Button2': self.on_middle_click,
+            'Button3': self.on_right_click
+        })
+
+    def _schedule_refresh(self):
+        qtile.call_later(self.update_interval, self._refresh)
+
+    def _refresh(self):
+        self.volume()
+        self._schedule_refresh()
+
+    def volume(self):
+        result = subprocess.run([get_script_path("OpenFlexOS_Volume.sh")], capture_output=True, text=True)
+        self.text = result.stdout.strip()
+        self.draw()
+
+    def on_left_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-u"])
+        self.volume()
+
+    def on_middle_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-m"])
+        self.volume()
+
+    def on_right_click(self):
+        subprocess.run([get_script_path("OpenFlexOS_Volume.sh"), "-d"])
+        self.volume()
 
 class nerd_dictation(TextBox):
 	def __init__(self):
