@@ -1,0 +1,15 @@
+# Auto-generated GTK2 theme
+# Current Theme: gruvbox
+gtk-color-scheme = "bg_color:#282828\nfg_color:#ebdbb2\ntxt_color:#ebdbb2\nbase_color:#282828\nselected_bg_color:#458588\nselected_fg_color:#ebdbb2"
+
+style "custom-theme" {
+    bg[NORMAL] = "#282828"
+    fg[NORMAL] = "#ebdbb2"
+    base[NORMAL] = "#282828"
+    text[NORMAL] = "#ebdbb2"
+
+    bg[SELECTED] = "#458588"
+    fg[SELECTED] = "#ebdbb2"
+}
+
+class "GtkWidget" style "custom-theme"
