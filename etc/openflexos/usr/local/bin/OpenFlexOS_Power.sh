@@ -23,7 +23,7 @@ power() {
     fi
 
     # ------------------------------
-    # Load sound configuration (optional)
+    # Load sound configuration
     # ------------------------------
     [[ "$WM" == "qtile" ]] && source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
     [[ "$WM" == "openbox" ]] && source "$HOME/.config/openbox/scripts/OpenFlexOS_Sounds.sh"
@@ -33,8 +33,18 @@ power() {
     # ------------------------------
     if [[ "$1" == "rofi" ]]; then
         launcher="rofi -i -config /home/$USER/.config/$WM/rofi/config.rasi -dmenu"
+
+        # 🔊 sound + rofi at same time
+        [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+            && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
+
     elif [[ "$1" == "dmenu" ]]; then
         launcher=(dmenu -nb "$DMENU_NB" -nf "$DMENU_NF" -sb "$DMENU_SB" -sf "$DMENU_SF" -l 15 -i -p "Power")
+
+        # 🔊 sound + dmenu at same time
+        [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+            && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
+
     else
         echo "Invalid launcher type"
         exit 1
@@ -102,8 +112,19 @@ power() {
     # ------------------------------
     confirm() {
         if [[ "$1" == "dmenu" ]]; then
+
+            # 🔊 sound + dmenu confirm at same time
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
+
             yes_no=$(printf " no\n yes" | "${launcher[@]}" -p "Confirm $2?")
+
         else
+
+            # 🔊 sound + rofi confirm at same time
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
+
             yes_no=$(printf " no\n yes" | $launcher -p "Confirm $2?")
         fi
 
@@ -168,7 +189,6 @@ while getopts "drh" main 2>/dev/null; do
             package_list=(dmenu ttf-nerd-fonts-symbols)
             for pkg in "${package_list[@]}"; do
                 if ! pacman -Q "$pkg" >/dev/null 2>&1; then
-                    script_name=$(basename "$0")
                     dunstify -u normal "Installing missing package: $pkg"
                     alacritty -e bash -c "sudo pacman -S --noconfirm $pkg; read -p 'Press Enter to close...'"
                 fi
@@ -179,7 +199,6 @@ while getopts "drh" main 2>/dev/null; do
             package_list=(rofi ttf-nerd-fonts-symbols)
             for pkg in "${package_list[@]}"; do
                 if ! pacman -Q "$pkg" >/dev/null 2>&1; then
-                    script_name=$(basename "$0")
                     dunstify -u normal "Installing missing package: $pkg"
                     alacritty -e bash -c "sudo pacman -S --noconfirm $pkg; read -p 'Press Enter to close...'"
                 fi

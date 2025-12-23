@@ -6,12 +6,10 @@
 # Usage:
 #   ./web_bookmarks.sh -r   (for rofi)
 #   ./web_bookmarks.sh -d   (for dmenu)
-# Notes:
-#   - Add websites to ~/.config/web_bookmarks/sites.txt
-#   - Format: Website Name | https://example.com
-#   - To set Default Browser run xdg-settings set default-web-browser <desktop-file> from terminal
 # ================================================================
+
 source "$HOME/.config/dmenu_theme.conf"
+
 CONFIG_DIR="$HOME/.config/web_bookmarks"
 SITE_LIST="$CONFIG_DIR/sites.txt"
 
@@ -26,9 +24,14 @@ else
     WM="unknown"
 fi
 
+# -----------------------------
+# Load sound configuration
+# -----------------------------
+[[ "$WM" == "qtile" ]] && source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
+[[ "$WM" == "openbox" ]] && source "$HOME/.config/openbox/scripts/OpenFlexOS_Sounds.sh"
+
 # -----------------------------------------------------------------
 # Function: install_missing
-# Description: Install missing packages via pacman
 # -----------------------------------------------------------------
 install_missing() {
     local packages=("$@")
@@ -40,7 +43,6 @@ install_missing() {
             echo "Message from $script_name: $pkg is NOT installed, installing..."
             dunstify -u normal "Installing $pkg..."
             zenity --info --text="Installing $pkg..."
-
             alacritty -e bash -c "sudo pacman -S --noconfirm $pkg; read -p 'Press Enter to close...'"
         fi
     done
@@ -48,10 +50,13 @@ install_missing() {
 
 # -----------------------------------------------------------------
 # Function: rofi_cmd
-# Description: Run rofi with proper configuration based on WM
 # -----------------------------------------------------------------
 rofi_cmd() {
     local prompt="${1:-Select Website}"
+
+    # 🔊 sound + rofi at same time
+    [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+        && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
 
     case "$WM" in
         qtile)
@@ -68,7 +73,6 @@ rofi_cmd() {
 
 # -----------------------------------------------------------------
 # Function: web_menu
-# Description: Show list of websites and open selected in browser
 # -----------------------------------------------------------------
 web_menu() {
     local launcher=("$@")
@@ -104,7 +108,10 @@ while getopts "drh" opt 2>/dev/null; do
         d)
             install_missing dmenu xdg-utils alacritty
 
-            # Dmenu launcher as array
+            # 🔊 sound + dmenu at same time
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
+
             dmenu_launcher=(
                 dmenu
                 -nb "$DMENU_NB"
@@ -120,7 +127,6 @@ while getopts "drh" opt 2>/dev/null; do
             ;;
         r)
             install_missing rofi xdg-utils alacritty
-
             web_menu rofi_cmd
             ;;
         h)
@@ -138,7 +144,6 @@ while getopts "drh" opt 2>/dev/null; do
     exit 0
 done
 
-# Fallback message
 echo "Usage: $(basename "$0") [-r | -d | -h]"
 exit 1
 

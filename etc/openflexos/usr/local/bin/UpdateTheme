@@ -31,6 +31,15 @@ if [[ "$theme_selector" == "none" ]]; then
 fi
 
 # ---------------------------
+# Load sound configuration
+# ---------------------------
+if pgrep -x qtile >/dev/null; then
+    source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
+elif pgrep -x openbox >/dev/null; then
+    source "$HOME/.config/openbox/scripts/OpenFlexOS_Sounds.sh"
+fi
+
+# ---------------------------
 # Load themes dynamically
 # ---------------------------
 themes=($(jq -r '.themes | keys[]' "$THEMES_FILE" | sort))
@@ -41,10 +50,21 @@ themes=($(jq -r '.themes | keys[]' "$THEMES_FILE" | sort))
 menu() {
     local prompt="$1"
     shift
-    printf "%s\n" "$@" | case "$theme_selector" in
-        dmenu) dmenu -p "$prompt" -l 10 ;;
-        rofi)  rofi -dmenu -p "$prompt" -i ;;
-    esac
+
+    if [[ "$theme_selector" == "dmenu" ]]; then
+        # 🔊 sound + dmenu at same time
+        [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+            && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
+
+        printf "%s\n" "$@" | dmenu -p "$prompt" -l 10
+
+    else
+        # 🔊 sound + rofi at same time
+        [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+            && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
+
+        printf "%s\n" "$@" | rofi -dmenu -p "$prompt" -i
+    fi
 }
 
 # ---------------------------

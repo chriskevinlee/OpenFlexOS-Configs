@@ -2,9 +2,9 @@
 # ================================================================
 # Description: Combined WiFi Menu using Rofi or Dmenu and status display
 # Author: Chris Lee, ChatGPT
-# Dependencies: rofi, dmenu, networkmanager, dunstify, NerdFontsSymbolsOnly
 # ================================================================
 source "$HOME/.config/dmenu_theme.conf"
+
 wifi_icon=""
 ethernet_icon=""
 disconnected_icon=""
@@ -22,12 +22,21 @@ else
     WM="unknown"
 fi
 
+# ---------------------------------------------------------------
+# Load sound configuration
+# ---------------------------------------------------------------
+[[ "$WM" == "qtile" ]] && source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
+[[ "$WM" == "openbox" ]] && source "$HOME/.config/openbox/scripts/OpenFlexOS_Sounds.sh"
 
 # ---------------------------------------------------------------
 # Rofi launcher helper
 # ---------------------------------------------------------------
 rofi_cmd() {
     local prompt="${1:-Select an option}"
+
+    # 🔊 sound + rofi
+    [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+        && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
 
     case "$WM" in
         qtile)
@@ -85,8 +94,11 @@ status_network() {
 # ---------------------------------------------------------------
 wifi_network() {
     local launcher=("$@")
-
     local main_menu
+
+    # 🔊 main menu sound
+    [[ "${launcher[0]}" != "rofi_cmd" && "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+        && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
 
     if [[ "${launcher[0]}" == "rofi_cmd" ]]; then
         main_menu=$(echo -e "󱚽 Connect to a Wi-Fi Network\n󰖪 Enable or Disable Wi-Fi\n󱛅 Forget a Wi-Fi Network" | rofi_cmd "Wi-Fi Manager:")
@@ -98,6 +110,10 @@ wifi_network() {
         "󱚽 Connect to a Wi-Fi Network")
             local wifi_list wifi_ssid password status
             wifi_list=$(nmcli --fields SSID,ACTIVE device wifi list | sed '/^$/d' | grep -v -e '^--' -e '^SSID' | awk -F'  +' '{if ($2 == "yes") print $1 " (active)"; else print $1}' | sort -u)
+
+            # 🔊 Wi-Fi list sound
+            [[ "${launcher[0]}" != "rofi_cmd" && "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
 
             if [[ "${launcher[0]}" == "rofi_cmd" ]]; then
                 wifi_ssid=$(echo "$wifi_list" | rofi_cmd "Select Wi-Fi:")
@@ -124,20 +140,13 @@ wifi_network() {
                 dunstify -u critical "Failed to connect to $wifi_ssid. Try again."
             fi
             ;;
-        "󰖪 Enable or Disable Wi-Fi")
-            local wifi_status
-            wifi_status=$(nmcli radio wifi)
-            if [[ $wifi_status == "enabled" ]]; then
-                nmcli radio wifi off
-                dunstify -u normal "Wi-Fi Disabled"
-            else
-                nmcli radio wifi on
-                dunstify -u normal "Wi-Fi Enabled"
-            fi
-            ;;
         "󱛅 Forget a Wi-Fi Network")
             local saved_wifi forget_ssid
             saved_wifi=$(nmcli -f NAME,TYPE connection show | grep wifi | awk '{print $1}' | sort -u)
+
+            # 🔊 forget list sound
+            [[ "${launcher[0]}" != "rofi_cmd" && "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
 
             if [[ "${launcher[0]}" == "rofi_cmd" ]]; then
                 forget_ssid=$(echo "$saved_wifi" | rofi_cmd "Forget which Wi-Fi?")
@@ -165,7 +174,6 @@ install_missing() {
     local packages=("$@")
     for pkg in "${packages[@]}"; do
         if ! pacman -Q "$pkg" >/dev/null 2>&1; then
-            echo "Installing $pkg..."
             dunstify -u normal "Installing $pkg..."
             alacritty -e bash -c "sudo pacman -S --noconfirm $pkg; read -p 'Press Enter to close...'"
         fi
@@ -184,31 +192,24 @@ while getopts "rdh" opt 2>/dev/null; do
         d)
             install_missing dmenu networkmanager dunst ttf-nerd-fonts-symbols
             dmenu_launcher=(
-    dmenu
-    -nb "$DMENU_NB"
-    -nf "$DMENU_NF"
-    -sb "$DMENU_SB"
-    -sf "$DMENU_SF"
-    -l 15
-    -i
-)
-
-wifi_network "${dmenu_launcher[@]}"
-
-	    
-	    ;;
+                dmenu
+                -nb "$DMENU_NB"
+                -nf "$DMENU_NF"
+                -sb "$DMENU_SB"
+                -sf "$DMENU_SF"
+                -l 15
+                -i
+            )
+            wifi_network "${dmenu_launcher[@]}"
+            ;;
         h)
             echo "Wi-Fi Manager Script"
             echo "Usage: $(basename "$0") [-r | -d | -h]"
-            echo ""
-            printf "%-30s %s\n" " -r" "Use Rofi to manage Wi-Fi"
-            printf "%-30s %s\n" " -d" "Use Dmenu to manage Wi-Fi"
-            printf "%-30s %s\n" " -h" "Show this help message"
             ;;
         *)
-            echo "Please see $(basename "$0") -h for help"
             exit 1
             ;;
     esac
     exit 0
 done
+

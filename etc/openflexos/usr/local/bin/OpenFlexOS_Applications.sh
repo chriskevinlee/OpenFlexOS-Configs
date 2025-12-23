@@ -1,19 +1,24 @@
 #!/bin/bash
 
 # ================================================================
-# Description: A Script that uses rofi or dmenu for an application launcher by commenting or uncommenting the appropriate variable
+# Description: Application launcher using rofi or dmenu with sound
 # Author: Chris Lee, ChatGPT
-# Dependencies: rofi, dmenu
-# Usage: ./applications.sh
-# Notes:
+# Dependencies: rofi, dmenu, mpv
+# Usage: ./OpenFlexOS_Applications.sh [-r | -d]
 # ================================================================
-# Load dmenu theme (generated from JSON)
+
+# ------------------------------------------------
+# Load configs
+# ------------------------------------------------
 source "$HOME/.config/dmenu_theme.conf"
+source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
 
 applications_icon=""
-echo $applications_icon
+echo "$applications_icon"
 
-# Detect window manager (same as power script)
+# ------------------------------------------------
+# Detect window manager
+# ------------------------------------------------
 if qtile cmd-obj -o cmd -f info >/dev/null 2>&1; then
     WM="qtile"
 elif pgrep -f qtile >/dev/null; then
@@ -24,94 +29,109 @@ else
     WM="unknown"
 fi
 
-rofi_cmd() {
-    if [[ "$WM" == "qtile" ]]; then
-        rofi -config /home/$USER/.config/qtile/rofi/config.rasi -show drun -display-drun "Apps "
-    elif [[ "$WM" == "openbox" ]]; then
-        rofi -config /home/$USER/.config/openbox/rofi/config.rasi -show drun -display-drun "Apps "
+# ------------------------------------------------
+# Play sound in background (non-blocking)
+# ------------------------------------------------
+play_sound_bg() {
+    [[ "$active_sounds" != yes ]] && return
+    [[ ! -f "$1" ]] && return
+    mpv --no-video --no-terminal "$1" >/dev/null 2>&1 &
+}
 
+# ------------------------------------------------
+# Rofi launcher (foreground)
+# ------------------------------------------------
+rofi_cmd() {
+
+    # Sound + launcher start together
+    play_sound_bg "${sounds_dir}${rofi_sound}"
+
+    if [[ "$WM" == "qtile" ]]; then
+        rofi -config "/home/$USER/.config/qtile/rofi/config.rasi" \
+             -show drun -display-drun "Apps "
+    elif [[ "$WM" == "openbox" ]]; then
+        rofi -config "/home/$USER/.config/openbox/rofi/config.rasi" \
+             -show drun -display-drun "Apps "
     fi
 }
 
+# ------------------------------------------------
+# Argument parsing
+# ------------------------------------------------
 while getopts "drh" main 2>/dev/null; do
   case "${main}" in
+
+    # ------------------------------------------------
+    # DMENU MODE
+    # ------------------------------------------------
     d )
-        package_list=(
-            dmenu
-            ttf-nerd-fonts-symbols
-        )
+        package_list=(dmenu ttf-nerd-fonts-symbols)
 
         for pkg in "${package_list[@]}"; do
             if ! pacman -Q "$pkg" >/dev/null 2>&1; then
                 script_name=$(basename "$0")
-                echo "Message from $script_name: $pkg is NOT installed, installing..."
-                dunstify -u normal "Message from $script_name: $pkg is NOT installed, installing..."
-                zenity --info --text="Message from $script_name: $pkg is NOT installed, installing..."
-
+                dunstify -u normal "Installing missing package: $pkg"
                 alacritty -e bash -c "sudo pacman -S --noconfirm $pkg; read -p 'Press Enter to close...'"
             fi
         done
 
+        app_dirs=("/usr/share/applications" "$HOME/.local/share/applications")
+        declare -A app_map
 
-      # Define directories containing .desktop files
-      app_dirs=("/usr/share/applications" "$HOME/.local/share/applications")
+        for dir in "${app_dirs[@]}"; do
+            if [ -d "$dir" ]; then
+                while IFS= read -r desktop; do
+                    name=$(grep -m 1 "^Name=" "$desktop" | cut -d'=' -f2)
+                    app_map["$name"]="$desktop"
+                done < <(find "$dir" -name "*.desktop")
+            fi
+        done
 
-      # Create an associative array to store names and paths
-      declare -A app_map
+        # Sound + dmenu start together
+        play_sound_bg "${sounds_dir}${dmenu_sound}"
 
-      # Populate the associative array with application names and their .desktop paths
-      for dir in "${app_dirs[@]}"; do
-        if [ -d "$dir" ]; then
-          while IFS= read -r desktop; do
-            # Extract the application name
-            name=$(grep -m 1 "^Name=" "$desktop" | cut -d'=' -f2)
+        app=$(printf '%s\n' "${!app_map[@]}" | sort -u | \
+              dmenu $DMENU_OPTS -p "Launch Application")
 
-            # Store the desktop path in the associative array
-            app_map["$name"]="$desktop"
-          done < <(find "$dir" -name "*.desktop")
+        if [[ -n "$app" && -n "${app_map[$app]}" ]]; then
+            exec_command=$(grep -m 1 "^Exec=" "${app_map[$app]}" \
+                | cut -d'=' -f2 | sed 's/ *%[UuFfNn] *//g')
+            sh -c "$exec_command &"
         fi
-      done
+        ;;
 
-      # Show only the application names in dmenu
-       app=$(printf '%s\n' "${!app_map[@]}" | sort -u | dmenu $DMENU_OPTS -p "Launch Application")
-
-      # Launch the selected application if it exists in the map
-      if [ -n "$app" ] && [ -n "${app_map[$app]}" ]; then
-        # Get the Exec command, remove %U, %u, %F, %f, etc.
-        exec_command=$(grep -m 1 "^Exec=" "${app_map[$app]}" | cut -d'=' -f2 | sed 's/ *%[UuFfNn] *//g')
-        sh -c "$exec_command &"
-      fi
-      ;;
+    # ------------------------------------------------
+    # ROFI MODE
+    # ------------------------------------------------
     r )
-        package_list=(
-            rofi
-            ttf-nerd-fonts-symbols
-        )
+        package_list=(rofi ttf-nerd-fonts-symbols)
 
         for pkg in "${package_list[@]}"; do
             if ! pacman -Q "$pkg" >/dev/null 2>&1; then
                 script_name=$(basename "$0")
-                echo "Message from $script_name: $pkg is NOT installed, installing..."
-                dunstify -u normal "Message from $script_name: $pkg is NOT installed, installing..."
-                zenity --info --text="Message from $script_name: $pkg is NOT installed, installing..."
-
+                dunstify -u normal "Installing missing package: $pkg"
                 alacritty -e bash -c "sudo pacman -S --noconfirm $pkg; read -p 'Press Enter to close...'"
             fi
         done
 
         rofi_cmd
         exit 0
-      ;;
-    h )
-      echo "A basic Application Launcher"
-      echo "Usage: $(basename "$0") [ARGUMENT]"
-      echo ""
+        ;;
 
-      printf "%-30s %s\n" " -r" "Use Rofi to Launch Applications"
-      printf "%-30s %s\n" " -d" "Use Dmenu to Launch Applications"
-      ;;
+    # ------------------------------------------------
+    # HELP
+    # ------------------------------------------------
+    h )
+        echo "A basic Application Launcher"
+        echo "Usage: $(basename "$0") [ARGUMENT]"
+        echo ""
+        printf "%-30s %s\n" " -r" "Use Rofi to Launch Applications"
+        printf "%-30s %s\n" " -d" "Use Dmenu to Launch Applications"
+        ;;
+
     * )
         echo "Please see $(basename "$0") -h for help"
         ;;
   esac
 done
+
