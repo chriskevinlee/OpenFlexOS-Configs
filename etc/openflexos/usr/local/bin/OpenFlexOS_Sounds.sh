@@ -35,3 +35,7 @@ reboot_sound="radio-logo-154127.mp3"
 suspend_sound="computer-startup-music-97699.mp3"
 hibernate_sound="startup-sound-variation-6-316850.mp3"
 poweroff_sound="sanyo-scp-device-shutdown-320506.mp3"
+
+dmenu_sound="power-down-42676.mp3"
+rofi_sound="power-down-42676.mp3"
+
