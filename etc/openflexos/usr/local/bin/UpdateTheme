@@ -3,21 +3,36 @@ set -e
 
 THEMES_FILE="$HOME/.config/themes.json"
 SOCKET="$HOME/.cache/qtile/qtilesocket.:0"
+source "$HOME/.config/dmenu_theme.conf"
+
 
 # Terminal & editor (Qtile usually sets TERMINAL)
 TERMINAL="${TERMINAL:-alacritty}"
 EDITOR_CMD="${EDITOR:-vim}"
 
-# Default theme selection method
-theme_selector="none"
 
 # ---------------------------
 # Parse command-line options
 # ---------------------------
 while getopts "dr" opt; do
     case $opt in
-        d) theme_selector="dmenu" ;;
-        r) theme_selector="rofi" ;;
+        d)
+            menu_backend="dmenu"
+            dmenu_cmd=(
+                dmenu
+                -nb "$DMENU_NB"
+                -nf "$DMENU_NF"
+                -sb "$DMENU_SB"
+                -sf "$DMENU_SF"
+            )
+            ;;
+        r)
+            menu_backend="rofi"
+            rofi_cmd=(
+                rofi
+                -config "$HOME/.config/qtile/rofi/config.rasi"
+            )
+            ;;
         *)
             echo "Usage: $0 [-d] [-r]"
             exit 1
@@ -25,7 +40,7 @@ while getopts "dr" opt; do
     esac
 done
 
-if [[ "$theme_selector" == "none" ]]; then
+if [[ -z "$menu_backend" ]]; then
     echo "Error: You must choose -d (dmenu) or -r (rofi)"
     exit 1
 fi
@@ -51,20 +66,20 @@ menu() {
     local prompt="$1"
     shift
 
-    if [[ "$theme_selector" == "dmenu" ]]; then
-        # 🔊 sound + dmenu at same time
-        [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
-            && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
+    case "$menu_backend" in
+        dmenu)
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
 
-        printf "%s\n" "$@" | dmenu -p "$prompt" -l 10
+            printf "%s\n" "$@" | "${dmenu_cmd[@]}" -p "$prompt" -l 10
+            ;;
+        rofi)
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
 
-    else
-        # 🔊 sound + rofi at same time
-        [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
-            && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
-
-        printf "%s\n" "$@" | rofi -dmenu -p "$prompt" -i
-    fi
+            printf "%s\n" "$@" | "${rofi_cmd[@]}" -dmenu -p "$prompt" -i
+            ;;
+    esac
 }
 
 # ---------------------------
@@ -137,4 +152,3 @@ case "$action" in
     "Apply theme")     apply_theme ;;
     *) exit 0 ;;
 esac
-
