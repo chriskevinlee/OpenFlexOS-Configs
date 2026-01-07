@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
+set -e
 
 QTILE_CONFIG="$HOME/.config/qtile/config.py"
+source "$HOME/.config/dmenu_theme.conf"
 
 usage() {
     cat <<EOF
-Usage: test.sh [OPTION]
+Usage: keybinds.sh [OPTION]
 
 Options:
   -r    Show all keybindings in rofi
@@ -19,23 +21,58 @@ EOF
 [ $# -eq 0 ] && usage
 
 MODE=""
+menu_backend=""
+
 while getopts "rdzch" opt; do
     case "$opt" in
-        r|d|z|c) MODE="$opt" ;;
-        h) usage ;;
-        *) usage ;;
+        r)
+            MODE="menu"
+            menu_backend="rofi"
+            menu_cmd=(
+                rofi
+                -config "$HOME/.config/qtile/rofi/config.rasi"
+                -dmenu
+                -i
+                -p "Qtile Keybindings"
+            )
+            ;;
+        d)
+            MODE="menu"
+            menu_backend="dmenu"
+            menu_cmd=(
+                dmenu
+                -nb "$DMENU_NB"
+                -nf "$DMENU_NF"
+                -sb "$DMENU_SB"
+                -sf "$DMENU_SF"
+                -l 20
+                -p "Qtile Keybindings"
+            )
+            ;;
+        z)
+            MODE="zenity"
+            ;;
+        c)
+            MODE="conky"
+            ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
     esac
 done
 
 [ -z "$MODE" ] && usage
 
+# ---------------------------
+# Helpers
+# ---------------------------
 format_conky_columns() {
     awk -F'\t' '{ print $1 " ${tab 130}" $2 }'
 }
 
-# ---------------------------
-# Cleanup helper (TAB SAFE)
-# ---------------------------
 clean() {
     sed '
         s/"//g
@@ -48,9 +85,6 @@ clean() {
     '
 }
 
-# ---------------------------
-# Extract ALL keys (label<TAB>keys)
-# ---------------------------
 extract_all() {
     awk '
     /Key\(\[/ && /desc="/ {
@@ -81,9 +115,6 @@ extract_all() {
     ' "$QTILE_CONFIG" | clean
 }
 
-# ---------------------------
-# Extract CONKY-only keys
-# ---------------------------
 extract_conky() {
     awk '
     /Key\(\[/ && /desc="/ {
@@ -116,9 +147,6 @@ extract_conky() {
     ' "$QTILE_CONFIG" | clean
 }
 
-# ---------------------------
-# Format columns (SPACE padded)
-# ---------------------------
 format_columns() {
     awk -F'\t' '
     {
@@ -136,21 +164,16 @@ format_columns() {
 # Dispatch
 # ---------------------------
 case "$MODE" in
-    r)
-        extract_all | format_columns | rofi -dmenu -i -p "Qtile Keybindings"
+    menu)
+        extract_all | format_columns | "${menu_cmd[@]}"
         ;;
-    d)
-        extract_all | format_columns | dmenu -l 20 -p "Qtile Keybindings"
-        ;;
-    z)
+    zenity)
         extract_all | format_columns | zenity --text-info \
             --title="Qtile Keybindings" \
             --width=800 --height=600 \
             --font="Monospace 10"
         ;;
-    c)
-
-    extract_conky | format_conky_columns
-;;
+    conky)
+        extract_conky | format_conky_columns
+        ;;
 esac
-
