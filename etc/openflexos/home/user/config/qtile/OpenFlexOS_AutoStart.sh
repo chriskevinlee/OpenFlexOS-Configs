@@ -72,6 +72,7 @@ flameshot &
 xscreensaver -no-splash &
 picom &
 tilda &
+conky -c /home/$USER/.config/conky/conky.conf &
 
 # Start Scripts at Login
 /home/$USER/.config/qtile/scripts/OpenFlexOS_BatteryHibernate.sh &
