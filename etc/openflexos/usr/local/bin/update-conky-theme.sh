@@ -1,4 +1,3 @@
-cat update-conky-theme.sh
 #!/usr/bin/env bash
 # Reads the current theme from themes.json and generates alacritty.toml
 
