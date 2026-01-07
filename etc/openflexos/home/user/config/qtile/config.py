@@ -253,6 +253,24 @@ nmcli_widget = widget.GenPollText(
 def init_widgets_list():
     widgets_list = [
 
+
+widget.TextBox(
+    text="",
+    fontsize=15,
+    padding=8,
+    foreground=colors["fg"],
+    background=colors["color3"],
+    mouse_callbacks={
+        'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -d"),
+        'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -r"),
+    },
+    **powerlineleft,
+),
+
+
+
+
+
 #widget.TextBox(
 #    text="",
 #    fontsize=15,
@@ -560,27 +578,27 @@ keys = [
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 
     # Start of My Config: setting my own keys
-    Key([mod, "shift"], "c", lazy.spawn("caja"), desc="Launch Caja"),
-    Key([mod, "shift"], "f", lazy.spawn("firefox"), desc="Launch Firefox"),
-    Key([mod, "shift"], "b", lazy.spawn("brave --password-store=basic"), desc="Launch Brave"),
+    Key([mod, "shift"], "c", lazy.spawn("caja"), desc="[conky]Launch Caja"),
+    Key([mod, "shift"], "f", lazy.spawn("firefox"), desc="[conky]Launch Firefox"),
+    Key([mod, "shift"], "b", lazy.spawn("brave --password-store=basic"), desc="[conky]Launch Brave"),
     Key([], "XF86AudioRaiseVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " -u"), desc="Increase volume"),
     Key([], "XF86AudioLowerVolume", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " -d"), desc="Decrease volume"),
     Key([], "XF86AudioMute", lazy.spawn(get_script_path("OpenFlexOS_Volume.sh") + " -m"), desc="Mute/Unmute"),
 
-    Key([mod, "shift"], "x", lazy.spawn(get_script_path("OpenFlexOS_Info.sh") + " -n"), desc="Increase volume"),
-    Key([mod, "shift"], "z", lazy.spawn(get_script_path("OpenFlexOS_Info.sh") + " -p"), desc="Increase volume"),
+    Key([mod, "shift"], "x", lazy.spawn(get_script_path("OpenFlexOS_Info.sh") + " -n"), desc="[conky]Switch Info Forward"),
+    Key([mod, "shift"], "z", lazy.spawn(get_script_path("OpenFlexOS_Info.sh") + " -p"), desc="[conky]Switch Info Backwards"),
 
     # Key Chord for Applications Menu
     KeyChord([mod, "shift"], "a", [
         Key([], "d",
             lazy.spawn(get_script_path("OpenFlexOS_Applications.sh") + " -d"),
             lazy.ungrab_chord(),
-            desc="Dmenu"
+            desc="[conky]Application Menu-Dmenu"
         ),
         Key([], "r",
             lazy.spawn(get_script_path("OpenFlexOS_Applications.sh") + " -r"),
             lazy.ungrab_chord(),
-            desc="Rofi"
+            desc="[conky]Application Menu-Rofi"
         ),
     ], mode="Launcher"),
 
@@ -589,12 +607,12 @@ keys = [
         Key([], "d",
             lazy.spawn(get_script_path("OpenFlexOS_Power.sh") + " -d"),
             lazy.ungrab_chord(),
-            desc="Dmenu"
+            desc="[conky]Power Menu-Dmenu"
         ),
         Key([], "r",
             lazy.spawn(get_script_path("OpenFlexOS_Power.sh") + " -r"),
             lazy.ungrab_chord(),
-            desc="Rofi"
+            desc="[conky]Power Menu-Rofi"
         ),
     ], mode="Power"),
 
@@ -603,27 +621,27 @@ keys = [
         Key([], "d",
             lazy.spawn(get_script_path("OpenFlexOS_SSH.sh") + " -d"),
             lazy.ungrab_chord(),
-            desc="Dmenu"
+            desc="[conky]SSH Menu-Dmenu"
         ),
         Key([], "r",
             lazy.spawn(get_script_path("OpenFlexOS_SSH.sh") + " -r"),
             lazy.ungrab_chord(),
-            desc="Rofi"
+            desc="[conky]SSH Menu-Rofi"
         ),
     ], mode="SSH"),
 
 
-    # Key Chord for Network Menu
+    # Key Chord for  Menu
     KeyChord([mod, "shift"], "m", [
         Key([], "d",
             lazy.spawn(get_script_path("OpenFlexOS_Menu.sh") + " -d"),
             lazy.ungrab_chord(),
-            desc="Dmenu"
+            desc="[conky]Menu-Dmenu"
         ),
         Key([], "r",
             lazy.spawn(get_script_path("OpenFlexOS_Menu.sh") + " -r"),
             lazy.ungrab_chord(),
-            desc="Rofi"
+            desc="[conky]Menu-Rofi"
         ),
     ], mode="Launcher"),
 
@@ -646,12 +664,12 @@ keys = [
         Key([], "d",
             lazy.spawn(get_script_path("OpenFlexOS_Network.sh") + " -d"),
             lazy.ungrab_chord(),
-            desc="Dmenu"
+            desc="[conky]NetWork Menu-Dmenu"
         ),
         Key([], "r",
             lazy.spawn(get_script_path("OpenFlexOS_Network.sh") + " -r"),
             lazy.ungrab_chord(),
-            desc="Rofi"
+            desc="[conky]Network Menu-Rofi"
         ),
     ], mode="Launcher"),
 
@@ -660,12 +678,12 @@ keys = [
         Key([], "u",
             lazy.spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -u"),
             lazy.ungrab_chord(),
-            desc="Dmenu"
+            desc="[conky]Open Terminal and Run Updates"
         ),
         Key([], "v",
             lazy.spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -v"),
             lazy.ungrab_chord(),
-            desc="Rofi"
+            desc="[conky]Open Terminal and View Updates"
         ),
     ], mode="Launcher"),
 
@@ -674,17 +692,17 @@ keys = [
         Key([], "g",
             lazy.spawn("flameshot gui"),
             lazy.ungrab_chord(),
-            desc="Take a full screenshot with Flameshot"
+            desc="[conky]FlameShot Capture in GUI mode"
         ),
         Key([], "s",
             lazy.spawn("flameshot screen"),
             lazy.ungrab_chord(),
-            desc="Take a full screenshot with Flameshot"
+            desc="[conky]FlameShot Capture specified monitor"
         ),
         Key([], "f",
             lazy.spawn("flameshot full"),
             lazy.ungrab_chord(),
-            desc="Take a full screenshot with Flameshot"
+            desc="[conky]FlameShotCapture all monitors"
         ),
     ], mode="Screenshot"),
 
@@ -692,12 +710,12 @@ keys = [
         Key([], "r",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WebBookmarker.sh -r"),
             lazy.ungrab_chord(),
-            desc="Use Rofi with WebBookmaker"
+            desc="[conky]WebBookmaker Menu-rofi"
         ),
         Key([], "d",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WebBookmarker.sh -d"),
             lazy.ungrab_chord(),
-            desc="Use Dmenu with WebBookmaker"
+            desc="[conky]WebBookmaker Menu-dmenu"
         ),
     ], mode="WebBookmaker"),
 
@@ -705,27 +723,27 @@ keys = [
         Key([], "s",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -s"),
             lazy.ungrab_chord(),
-            desc="Select a static wallpaper"
+            desc="[conky]Select a static wallpaper"
         ),
         Key([], "r",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -r"),
             lazy.ungrab_chord(),
-            desc="Select a random wallpaper"
+            desc="[conky]Select a random wallpaper"
         ),
         Key([], "b",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -b"),
             lazy.ungrab_chord(),
-            desc="Start a wallpaper cycle"
+            desc="[conky]Start a wallpaper cycle"
         ),
         Key([], "e",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -e"),
             lazy.ungrab_chord(),
-            desc="Stop a wallpaper cycle"
+            desc="[conky]Stop a wallpaper cycle"
         ),
         Key([], "l",
             lazy.spawn("/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -l"),
             lazy.ungrab_chord(),
-            desc="Start a full screen slideshow"
+            desc="[conky]Start a full screen slideshow"
         ),
     ], mode="Wallpaper_changer"),
     # End of My Config: setting my own keys
@@ -841,3 +859,4 @@ def remove_empty_groups_on_switch():
         if g.name not in static_groups and g != current_group:
             if len(g.windows) == 0:
                 qtile.delete_group(g.name)
+
