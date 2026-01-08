@@ -109,6 +109,8 @@ apply_theme() {
     current=$(jq -r '.current' "$THEMES_FILE")
     echo "Applying theme: $current"
 
+
+    restart_qtile
     bash update-ohmyposh.sh
     bash update-rofi-theme.sh
     bash update_dmenu_theme.sh
@@ -118,8 +120,7 @@ apply_theme() {
     bash update-gtk3-theme.sh
     bash update-gtk4-theme.sh
     bash update_picom_theme.sh
-    bash update_conky_theme.sh
-    restart_qtile
+    bash update-conky-theme.sh
 }
 
 restart_qtile() {
