@@ -23,6 +23,10 @@ CURRENT_THEME=$(jq -r '.current' "$THEMES_FILE")
 
 # Extract colors
 BG=$(jq -r ".themes.\"$CURRENT_THEME\".bg" "$THEMES_FILE")
+COLOR1=$(jq -r ".themes.\"$CURRENT_THEME\".color1" "$THEMES_FILE")
+COLOR2=$(jq -r ".themes.\"$CURRENT_THEME\".color2" "$THEMES_FILE")
+COLOR3=$(jq -r ".themes.\"$CURRENT_THEME\".color3" "$THEMES_FILE")
+COLOR4=$(jq -r ".themes.\"$CURRENT_THEME\".color4" "$THEMES_FILE")
 
 # Check for missing theme
 if [[ "$BG" == "null" || -z "$BG" ]]; then
@@ -55,8 +59,12 @@ conky.config = {
 }
 
 conky.text = [[
-\${execpi 5 /home/chris/.config/qtile/scripts/OpenFlexOS_ConkyColorizeKeybindings.sh}
+\${color $COLOR1}\${font DejaVu Sans:bold:size=20}\${alignc}\${nodename}\${font}\${color}
+
+\${color $COLOR2}\${time %I:%M:%S %p}\${color}             \${color $COLOR3}UpTime:\$uptime\${color}\${color $COLOR1}\${alignr}\${time %a %d-%m-%Y}\${color}
+
+\${color $COLOR2}Custom KeyBindings\${color}
+\${execpi 999999 ~/.config/qtile/scripts/OpenFlexOS_ConkyColorizeKeybindings.sh}
 ]]
 EOF
 echo "✅ Conky theme updated to '$CURRENT_THEME' at: $CONKY_CONFIG"
-
