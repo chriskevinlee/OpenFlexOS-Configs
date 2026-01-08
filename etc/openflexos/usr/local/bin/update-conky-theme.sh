@@ -67,4 +67,8 @@ conky.text = [[
 \${execpi 999999 ~/.config/qtile/scripts/OpenFlexOS_ConkyColorizeKeybindings.sh}
 ]]
 EOF
+
+killall conky
+conky -c /home/$USER/.config/conky/conky.conf &
+
 echo "✅ Conky theme updated to '$CURRENT_THEME' at: $CONKY_CONFIG"
