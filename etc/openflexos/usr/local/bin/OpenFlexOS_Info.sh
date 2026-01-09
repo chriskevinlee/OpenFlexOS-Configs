@@ -26,30 +26,30 @@ get_hostname() {
 }
 
 get_uptime(){
-	# Read uptime in seconds
-	uptime_seconds=$(cut -d' ' -f1 /proc/uptime)
-	uptime_seconds=${uptime_seconds%.*}
-	
-	days=$(( uptime_seconds / 86400 ))
-	hours=$(( (uptime_seconds % 86400) / 3600 ))
-	minutes=$(( (uptime_seconds % 3600) / 60 ))
-	
-	if (( uptime_seconds < 3600 )); then
-	    # Under 1 hour → show minutes only
-	    echo "$ICON Uptime: ${minutes}m"
-	elif (( uptime_seconds < 86400 )); then
-	    # Under 1 day → show hours:minutes
-	    echo "$ICON Uptime: ${hours}h:${minutes}m"
-	else
-	    # 1 day+ → show days:hours:minutes
-	    echo "$ICON Uptime: ${days}d:${hours}h:${minutes}m"
-	fi
+    # Read uptime in seconds
+    uptime_seconds=$(cut -d' ' -f1 /proc/uptime)
+    uptime_seconds=${uptime_seconds%.*}
+
+    days=$(( uptime_seconds / 86400 ))
+    hours=$(( (uptime_seconds % 86400) / 3600 ))
+    minutes=$(( (uptime_seconds % 3600) / 60 ))
+
+    if (( uptime_seconds < 3600 )); then
+        # Under 1 hour → show minutes only
+        echo "$ICON Uptime: ${minutes}m"
+    elif (( uptime_seconds < 86400 )); then
+        # Under 1 day → show hours:minutes
+        echo "$ICON Uptime: ${hours}h:${minutes}m"
+    else
+        # 1 day+ → show days:hours:minutes
+        echo "$ICON Uptime: ${days}d:${hours}h:${minutes}m"
+    fi
 }
 
 index=$(cat "$STATE_FILE" 2>/dev/null || echo 0)
 max=$(( ${#functions[@]} - 1 ))
 
-while getopts "np" opt; do
+while getopts "nprluoh" opt; do
   case "$opt" in
     n)
       ((index++))
@@ -58,6 +58,35 @@ while getopts "np" opt; do
     p)
       ((index--))
       (( index < 0 )) && index=$max
+      ;;
+    r)
+    get_router_ip | awk '{print $4}'
+    exit 0
+      ;;
+    l)
+    get_local_ip | awk '{print $4}'
+    exit 0
+      ;;
+    u)
+    get_public_ip | awk '{print $4}'
+    exit 0
+      ;;
+    o)
+    get_hostname | awk '{print $3}'
+    exit 0
+      ;;
+    h)
+echo "Get Baisc Info
+Usage: OpenFlexOS_Info.sh [-n | -p | -r | -l | -u | -o | -h]
+
+-n              Rotate Forwards Between Options
+-p              Rotate Backwards Between Options
+-r              Shows Router/Gateway IP Address
+-l              Shows Local/Private IP Address
+-u              Shows Public IP Address
+-o              Shows Hostname
+-h              Show this help message"
+    exit 0
       ;;
   esac
 done

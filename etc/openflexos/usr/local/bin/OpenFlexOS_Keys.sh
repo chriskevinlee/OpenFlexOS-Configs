@@ -46,6 +46,7 @@ while getopts "rdzch" opt; do
                 -sb "$DMENU_SB"
                 -sf "$DMENU_SF"
                 -l 20
+		-i
                 -p "Qtile Keybindings"
             )
             ;;

@@ -63,6 +63,8 @@ conky.text = [[
 
 \${color $COLOR2}\${time %I:%M:%S %p}\${color}             \${color $COLOR3}UpTime:\$uptime\${color}\${color $COLOR1}\${alignr}\${time %a %d-%m-%Y}\${color}
 
+\${color $COLOR1}\${execpi 10 ~/.config/qtile/scripts/OpenFlexOS_Info.sh -r}            \${color}\${color $COLOR2}\${execpi 10 ~/.config/qtile/scripts/OpenFlexOS_Info.sh -l}\${color}\${color $COLOR3}\${alignr}\${execpi 10 ~/.config/qtile/scripts/OpenFlexOS_Info.sh -u}\${color}
+
 \${color $COLOR2}Custom KeyBindings\${color}
 \${execpi 999999 ~/.config/qtile/scripts/OpenFlexOS_ConkyColorizeKeybindings.sh}
 ]]
@@ -70,5 +72,3 @@ EOF
 
 killall conky
 conky -c /home/$USER/.config/conky/conky.conf &
-
-echo "✅ Conky theme updated to '$CURRENT_THEME' at: $CONKY_CONFIG"

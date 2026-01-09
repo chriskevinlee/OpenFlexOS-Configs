@@ -252,24 +252,19 @@ nmcli_widget = widget.GenPollText(
 
 def init_widgets_list():
     widgets_list = [
-
-
 widget.TextBox(
-    text="",
-    fontsize=15,
+    text="󰌌",
+    fontsize=20,
     padding=8,
     foreground=colors["fg"],
-    background=colors["color3"],
+    background=colors["color4"],
     mouse_callbacks={
         'Button1': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -d"),
+        'Button2': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -z"),
         'Button3': lambda: qtile.cmd_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -r"),
     },
     **powerlineleft,
 ),
-
-
-
-
 
 #widget.TextBox(
 #    text="",
