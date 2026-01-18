@@ -3,6 +3,7 @@ set -e
 
 QTILE_CONFIG="$HOME/.config/qtile/config.py"
 source "$HOME/.config/dmenu_theme.conf"
+source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
 
 usage() {
     cat <<EOF
@@ -46,7 +47,7 @@ while getopts "rdzch" opt; do
                 -sb "$DMENU_SB"
                 -sf "$DMENU_SF"
                 -l 20
-		-i
+                -i
                 -p "Qtile Keybindings"
             )
             ;;
@@ -166,6 +167,15 @@ format_columns() {
 # ---------------------------
 case "$MODE" in
     menu)
+        # 🔊 sound + menu launch at the same time
+        if [[ "$menu_backend" == "rofi" ]]; then
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${rofi_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${rofi_sound}" >/dev/null 2>&1 &
+        elif [[ "$menu_backend" == "dmenu" ]]; then
+            [[ "$active_sounds" == yes && -f "${sounds_dir}${dmenu_sound}" ]] \
+                && mpv --no-video --no-terminal "${sounds_dir}${dmenu_sound}" >/dev/null 2>&1 &
+        fi
+
         extract_all | format_columns | "${menu_cmd[@]}"
         ;;
     zenity)
