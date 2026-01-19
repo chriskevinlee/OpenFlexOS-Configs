@@ -542,12 +542,15 @@ keys = [
     # Grow/resize Windows in monadtall
     Key([mod], "i", lazy.layout.grow()),
     Key([mod], "m", lazy.layout.shrink()),
-
+    Key([mod], "n", lazy.layout.normalize()),
+    Key([mod], "r", lazy.layout.reset()),  
+#   Key([mod, "shift"], "r", lazy.layout.reset(), desc="Full layout reset"),
+ 
     # Grow/shrink/resize in floating mode
-    Key([mod, "shift"], "l", resize_floating_window(width=10), desc="Increase width by 10"),
-    Key([mod, "shift"], "h", resize_floating_window(width=-10), desc="Decrease width by 10"),
-    Key([mod, "shift"], "j", resize_floating_window(height=10), desc="Increase height by 10"),
-    Key([mod, "shift"], "k", resize_floating_window(height=-10), desc="Decrease height by 10"),
+    Key([mod, "control", "shift"], "l", resize_floating_window(width=10), desc="Increase width by 10"),
+    Key([mod, "control", "shift"], "h", resize_floating_window(width=-10), desc="Decrease width by 10"),
+    Key([mod, "control", "shift"], "j", resize_floating_window(height=10), desc="Increase height by 10"),
+    Key([mod, "control", "shift"], "k", resize_floating_window(height=-10), desc="Decrease height by 10"),
 
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
@@ -570,7 +573,7 @@ keys = [
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-    Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+    #Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 
     # Start of My Config: setting my own keys
     Key([mod, "shift"], "c", lazy.spawn("caja"), desc="[conky]Launch Caja"),
@@ -582,6 +585,7 @@ keys = [
 
     Key([mod, "shift"], "x", lazy.spawn(get_script_path("OpenFlexOS_Info.sh") + " -n"), desc="[conky]Switch Info Forward"),
     Key([mod, "shift"], "z", lazy.spawn(get_script_path("OpenFlexOS_Info.sh") + " -p"), desc="[conky]Switch Info Backwards"),
+
 
     # Key Chord for Applications Menu
     KeyChord([mod, "shift"], "a", [
