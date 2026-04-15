@@ -237,8 +237,8 @@ nmcli_widget = widget.GenPollText(
     update_interval=1,
     fmt='{} ',  # You can customize the formatting here
     mouse_callbacks={
-    'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_Network.sh") + " -d"),
-    'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_Network.sh") + " -r"),
+    'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_Network.sh") + " -d"),
+    'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_Network.sh") + " -r"),
     },
     foreground=colors["fg"],
     background=colors["color4"],
@@ -259,9 +259,9 @@ widget.TextBox(
     foreground=colors["fg"],
     background=colors["color4"],
     mouse_callbacks={
-        'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -d"),
-        'Button2': lambda: qtile_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -z"),
-        'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_Keys.sh") + " -r"),
+        'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_Keys.sh") + " -d"),
+        'Button2': lambda: qtile.spawn(get_script_path("OpenFlexOS_Keys.sh") + " -z"),
+        'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_Keys.sh") + " -r"),
     },
     **powerlineleft,
 ),
@@ -273,8 +273,8 @@ widget.TextBox(
 #    foreground=colors["fg"],
 #    background=colors["color3"],
 #    mouse_callbacks={
-#        'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_Applications.sh") + " -d"),
-#        'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_Applications.sh") + " -r"),
+#        'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_Applications.sh") + " -d"),
+#        'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_Applications.sh") + " -r"),
 #    },
 #    **powerlineleft,
 #),
@@ -370,8 +370,8 @@ widget.GenPollText(
     foreground=colors["fg"],
     padding=8,
     mouse_callbacks={
-        'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -u"),
-        'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -v"),
+        'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -u"),
+        'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_UpdateCheck.sh") + " -v"),
     },
     **powerlineright
 ),
@@ -390,8 +390,8 @@ widget.GenPollText(
         timeout=2
     ).stdout.strip(),
     mouse_callbacks={
-        'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_Info.sh") + " -n"),
-        'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_Info.sh") + " -p"),
+        'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_Info.sh") + " -n"),
+        'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_Info.sh") + " -p"),
         'Button2': copy_info_widget,  # middle-click copy
     },
     **powerlineright
@@ -409,8 +409,8 @@ widget.GenPollText(
      foreground=colors["fg"],
      padding=8,
      mouse_callbacks={
-         'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_Menu.sh") + " -d"),
-         'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_Menu.sh") + " -r"),
+         'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_Menu.sh") + " -d"),
+         'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_Menu.sh") + " -r"),
      },
 #      **powerlineright
  ),
@@ -422,8 +422,8 @@ widget.GenPollText(
 #    foreground=colors["fg"],
 #    background=colors["color3"],
 #    mouse_callbacks={
-#        'Button1': lambda: qtile_spawn(get_script_path("OpenFlexOS_Power.sh") + " -d"),
-#        'Button3': lambda: qtile_spawn(get_script_path("OpenFlexOS_Power.sh") + " -r"),
+#        'Button1': lambda: qtile.spawn(get_script_path("OpenFlexOS_Power.sh") + " -d"),
+#        'Button3': lambda: qtile.spawn(get_script_path("OpenFlexOS_Power.sh") + " -r"),
 #    },
 ##    **powerlineright,
 #),
