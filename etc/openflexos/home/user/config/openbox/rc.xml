@@ -4,7 +4,7 @@
         Copy the file to $HOME/.config/openbox/ instead. -->
 
 <openbox_config xmlns="http://openbox.org/3.4/rc"
-    xmlns:xi="http://www.w3.org/2001/XInclude">
+		xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <resistance>
   <strength>10</strength>
@@ -191,244 +191,250 @@
 
 <keyboard>
   <chainQuitKey>C-g</chainQuitKey>
-   <!-- My Keybindings -->
+<!-- My Keybindings Start -->  
 
-  <!-- Applications -->
-  <!-- Open Firefox -->
-  <keybind key="A-F">
-      <action name="Execute">
-          <command>firefox</command>
-      </action>
-  </keybind>
+<!-- Windows Snapping/Tiling -->
 
-  <!-- Open Terminal Alacritty -->
-  <keybind key="W-Return">
-      <action name="Execute">
-          <command>alacritty</command>
-      </action>
-  </keybind>
+<!-- LEFT HALF -->
+<keybind key="W-S-KP_4">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>0</x>
+    <y>0</y>
+    <width>50%</width>
+    <height>100%</height>
+  </action>
+</keybind>
 
-  <!-- Open File Manager Caja -->
-  <keybind key="A-C">
-      <action name="Execute">
-          <command>caja</command>
-      </action>
-  </keybind>
+<!-- RIGHT HALF -->
+<keybind key="W-S-KP_6">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>-0</x>
+    <y>0</y>
+    <width>50%</width>
+    <height>100%</height>
+  </action>
+</keybind>
 
-  <!-- Close Window -->
-<keybind key="W-W">
+<!-- TOP HALF -->
+<keybind key="W-S-KP_8">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>0</x>
+    <y>0</y>
+    <width>100%</width>
+    <height>50%</height>
+  </action>
+</keybind>
+
+<!-- BOTTOM HALF -->
+<keybind key="W-S-KP_2">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>0</x>
+    <y>-0</y>
+    <width>100%</width>
+    <height>50%</height>
+  </action>
+</keybind>
+
+<!-- MAXIMIZE -->
+<keybind key="W-S-KP_5">
+  <action name="MaximizeFull"/>
+</keybind>
+
+<!-- TOP LEFT -->
+<keybind key="W-S-KP_7">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>0</x>
+    <y>0</y>
+    <width>50%</width>
+    <height>50%</height>
+  </action>
+</keybind>
+
+<!-- TOP RIGHT -->
+<keybind key="W-S-KP_9">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>-0</x>
+    <y>0</y>
+    <width>50%</width>
+    <height>50%</height>
+  </action>
+</keybind>
+
+<!-- BOTTOM LEFT -->
+<keybind key="W-S-KP_1">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>0</x>
+    <y>-0</y>
+    <width>50%</width>
+    <height>50%</height>
+  </action>
+</keybind>
+
+<!-- BOTTOM RIGHT -->
+<keybind key="W-S-KP_3">
+  <action name="UnmaximizeFull"/>
+  <action name="MoveResizeTo">
+    <x>-0</x>
+    <y>-0</y>
+    <width>50%</width>
+    <height>50%</height>
+  </action>
+</keybind>
+
+<!-- MINIMIZE -->
+<keybind key="W-S-KP_0">
+  <action name="Iconify"/>
+</keybind>
+
+<!-- CLOSE WINDOW -->
+<keybind key="W-S-w">
   <action name="Close"/>
 </keybind>
 
-<!-- Window Tiling with NumPad -->
-<keybind key="W-KP_4">        <!-- Left Half -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>0</x><y>0</y><width>50%</width><height>97%</height>
-    </action>
+<!-- Application Keybindings -->
+
+<!-- LAUNCH FIREFOX -->
+<keybind key="W-S-f">
+  <action name="Execute">
+    <command>firefox</command>
+  </action>
 </keybind>
 
-<keybind key="W-KP_6">        <!-- Right Half -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>50%</x><y>0</y><width>50%</width><height>97%</height>
-    </action>
+<!-- LAUNCH ALACRITTY -->
+<keybind key="W-S-Return">
+  <action name="Execute">
+    <command>alacritty</command>
+  </action>
 </keybind>
 
-<keybind key="W-KP_8">        <!-- Top Half -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>0</x><y>0</y><width>100%</width><height>50%</height>
-    </action>
+<!-- LAUNCH CAJA -->
+<keybind key="W-S-c">
+  <action name="Execute">
+    <command>caja</command>
+  </action>
 </keybind>
 
-<keybind key="W-KP_2">        <!-- Bottom Half -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>0</x><y>50%</y><width>100%</width><height>50%</height>
-    </action>
-</keybind>
-
-<keybind key="W-KP_7">        <!-- Top Left -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>0</x><y>0</y><width>50%</width><height>50%</height>
-    </action>
-</keybind>
-
-<keybind key="W-KP_9">        <!-- Top Right -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>50%</x><y>0</y><width>50%</width><height>50%</height>
-    </action>
-</keybind>
-
-<keybind key="W-KP_1">        <!-- Bottom Left -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>0</x><y>50%</y><width>50%</width><height>50%</height>
-    </action>
-</keybind>
-
-<keybind key="W-KP_3">        <!-- Bottom Right -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>50%</x><y>50%</y><width>50%</width><height>50%</height>
-    </action>
-</keybind>
-
-<keybind key="W-KP_5">        <!-- Fullscreen -->
-    <action name="UnmaximizeFull"/>
-    <action name="MaximizeFull"/>
-</keybind>
-
-<keybind key="W-KP_0">        <!-- Unmaximize (exit fullscreen) -->
-    <action name="UnmaximizeFull"/>
-</keybind>
-
-<keybind key="W-KP_Subtract">        <!-- Minimize window -->
-    <action name="Iconify"/>
-</keybind>
-
-<keybind key="W-KP_Enter">        <!-- Centered 40% Window -->
-    <action name="UnmaximizeFull"/>
-    <action name="MoveResizeTo">
-        <x>20%</x><y>15%</y>
-        <width>60%</width><height>70%</height>
-    </action>
-</keybind>
-
+<!-- VOLUME UP -->
 <keybind key="XF86AudioRaiseVolume">
-    <action name="Execute">
-        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh -u</command>
-    </action>
+  <action name="Execute">
+    <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Volume.sh -u</command>
+  </action>
 </keybind>
+
+<!-- VOLUME DOWN -->
 <keybind key="XF86AudioLowerVolume">
-    <action name="Execute">
-        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh -d</command>
-    </action>
+  <action name="Execute">
+    <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Volume.sh -d</command>
+  </action>
 </keybind>
+
+<!-- MUTE -->
 <keybind key="XF86AudioMute">
-    <action name="Execute">
-        <command>~/.config/openbox/scripts/OpenFlexOS_Volume.sh -m</command>
-    </action>
-</keybind>
-
-<!-- Switch Workspaces Desktops -->
-<keybind key="W-1">
-  <action name="Desktop">
-    <desktop>1</desktop>
-  </action>
-</keybind>
-<keybind key="W-2">
-  <action name="Desktop">
-    <desktop>2</desktop>
-  </action>
-</keybind>
-<keybind key="W-3">
-  <action name="Desktop">
-    <desktop>3</desktop>
-  </action>
-</keybind>
-<keybind key="W-4">
-  <action name="Desktop">
-    <desktop>4</desktop>
+  <action name="Execute">
+    <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Volume.sh -m</command>
   </action>
 </keybind>
 
-<!-- KeyChords KeyChains -->
-<keybind key="A-m">
+<!-- KeyChords Scripts -->
+<keybind key="W-S-a">
   <keybind key="d">
-    <action name="Execute">
-        <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WebBookmarker.sh -d</command>
-    </action>
-  </keybind>
-
-  <keybind key="r">
-    <action name="Execute">
-      <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WebBookmarker.sh -r</command>
-    </action>
-  </keybind>
-</keybind>
-
-
-
-
-<keybind key="A-w">
-  <keybind key="s">
-    <action name="Execute">
-        <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -s</command>
-    </action>
-  </keybind>
-
-  <keybind key="r">
-    <action name="Execute">
-      <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -r</command>
-    </action>
-  </keybind>
-
-  <keybind key="b">
-    <action name="Execute">
-        <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -b</command>
-    </action>
-  </keybind>
-
-  <keybind key="e">
-    <action name="Execute">
-      <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -e</command>
-    </action>
-  </keybind>
-
-  <keybind key="l">
-    <action name="Execute">
-      <command>/etc/openflexos/usr/local/bin/OpenFlexOS_WallpaperChanger.sh -l</command>
-    </action>
-  </keybind>
-</keybind>
-
-<keybind key="A-A">
-  <keybind key="D">
     <action name="Execute">
       <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Applications.sh -d</command>
     </action>
   </keybind>
 
-  <keybind key="R">
+  <keybind key="r">
     <action name="Execute">
       <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Applications.sh -r</command>
     </action>
   </keybind>
 </keybind>
 
-<keybind key="A-N">
-  <keybind key="D">
+<keybind key="W-S-n">
+  <keybind key="d">
     <action name="Execute">
       <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Network.sh -d</command>
     </action>
   </keybind>
 
-  <keybind key="R">
+  <keybind key="r">
     <action name="Execute">
       <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Network.sh -r</command>
     </action>
   </keybind>
 </keybind>
 
-<keybind key="A-P">
-  <keybind key="D">
+
+<keybind key="W-S-s">
+  <keybind key="d">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_SSH.sh -d</command>
+    </action>
+  </keybind>
+
+  <keybind key="r">
+    <action name="Execute">
+      <command>/home/chris/.config/openbox/scripts/OpenFlexOS_SSH.sh -r</command>
+    </action>
+  </keybind>
+</keybind>
+
+
+<keybind key="W-S-p">
+  <keybind key="d">
     <action name="Execute">
       <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Power.sh -d</command>
     </action>
   </keybind>
 
-  <keybind key="R">
+  <keybind key="r">
     <action name="Execute">
       <command>/home/chris/.config/openbox/scripts/OpenFlexOS_Power.sh -r</command>
     </action>
   </keybind>
 </keybind>
 
+<!-- SEND WINDOW TO WORKSPACE 1 -->
+<keybind key="W-S-1">
+  <action name="SendToDesktop">
+    <desktop>1</desktop>
+    <follow>yes</follow>
+  </action>
+</keybind>
 
+<!-- SEND WINDOW TO WORKSPACE 2 -->
+<keybind key="W-S-2">
+  <action name="SendToDesktop">
+    <desktop>2</desktop>
+    <follow>yes</follow>
+  </action>
+</keybind>
+
+<!-- SEND WINDOW TO WORKSPACE 3 -->
+<keybind key="W-S-3">
+  <action name="SendToDesktop">
+    <desktop>3</desktop>
+    <follow>yes</follow>
+  </action>
+</keybind>
+
+<!-- SEND WINDOW TO WORKSPACE 4 -->
+<keybind key="W-S-4">
+  <action name="SendToDesktop">
+    <desktop>4</desktop>
+    <follow>yes</follow>
+  </action>
+</keybind>
+
+
+<!-- My Keybindings End -->  
 
 
   <!-- Keybindings for desktop switching -->
@@ -581,7 +587,7 @@
     </mousebind>
     <mousebind button="A-Right" action="Drag">
       <action name="Resize"/>
-    </mousebind>
+    </mousebind> 
 
     <mousebind button="A-Middle" action="Press">
       <action name="Lower"/>
@@ -833,7 +839,7 @@
     <!-- Menus -->
     <mousebind button="Middle" action="Press">
       <action name="ShowMenu"><menu>client-list-combined-menu</menu></action>
-    </mousebind>
+    </mousebind> 
     <mousebind button="Right" action="Press">
       <action name="ShowMenu"><menu>root-menu</menu></action>
     </mousebind>
@@ -911,7 +917,7 @@
   # order that they appear in this list
 
 
-    # each rule element can be left out or set to 'default' to specify to not
+    # each rule element can be left out or set to 'default' to specify to not 
     # change that attribute of the window
 
     <decor>yes</decor>

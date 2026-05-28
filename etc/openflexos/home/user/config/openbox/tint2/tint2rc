@@ -62,10 +62,10 @@ border_color_pressed = #000000 100
 
 #-------------------------------------
 # Panel
-panel_items = ELTSCEEEEE
-panel_size = 99% 30
-panel_margin = 0 10 0 0
-panel_padding = 0 0 10 0
+panel_items = ELTSCEEEEEE
+panel_size = 100% 30
+panel_margin = 0 0
+panel_padding = 2 0 2
 panel_background_id = 1
 wm_menu = 1
 panel_dock = 0
@@ -84,9 +84,6 @@ mouse_effects = 1
 font_shadow = 0
 mouse_hover_icon_asb = 100 0 10
 mouse_pressed_icon_asb = 100 0 0
-
-
-
 #-------------------------------------
 # Taskbar
 taskbar_mode = single_desktop
@@ -126,7 +123,7 @@ task_urgent_background_id = 4
 task_iconified_background_id = 2
 mouse_left = toggle_iconify
 mouse_middle = none
-mouse_right = none
+mouse_right = close
 mouse_scroll_up = toggle
 mouse_scroll_down = iconify
 
@@ -150,30 +147,51 @@ launcher_icon_asb = 100 0 0
 launcher_icon_theme_override = 0
 startup_notifications = 1
 launcher_tooltip = 1
-launcher_item_app = firefox.desktop
-launcher_item_app = Alacritty.desktop
-launcher_item_app = caja.desktop
+launcher_item_app = firefox.desktop 
+launcher_item_app = brave.desktop 
+launcher_item_app = Alacritty.desktop 
+launcher_item_app = caja.desktop 
 launcher_item_app = 
 launcher_item_app = 
 launcher_item_app = 
 launcher_item_app = 
-
+launcher_item_app = 
 #-------------------------------------
-# Clock
-time1_format = %I:%M:%S %p
-time2_format = %a %d %m %Y
+# Chris's Clock
+time1_format = %I:%M:%S%p
+time2_format = %A %d %B
 time1_timezone = 
 time2_timezone = 
 clock_font_color = #ffffff 100
 clock_padding = 2 0
 clock_background_id = 0
-clock_tooltip = %H:%M %p - %A %d %B %Y 
+clock_tooltip = 
 clock_tooltip_timezone = 
 clock_lclick_command = 
 clock_rclick_command = orage
 clock_mclick_command = 
 clock_uwheel_command = 
 clock_dwheel_command = 
+
+#-------------------------------------
+# Battery
+battery_tooltip = 1
+battery_low_status = 10
+battery_low_cmd = xmessage 'tint2: Battery low!'
+battery_full_cmd = 
+battery_font_color = #ffffff 100
+bat1_format = 
+bat2_format = 
+battery_padding = 1 0
+battery_background_id = 0
+battery_hide = 101
+battery_lclick_command = 
+battery_rclick_command = 
+battery_mclick_command = 
+battery_uwheel_command = 
+battery_dwheel_command = 
+ac_connected_cmd = 
+ac_disconnected_cmd = 
 
 #-------------------------------------
 # Tooltip
@@ -183,11 +201,12 @@ tooltip_padding = 4 4
 tooltip_background_id = 5
 tooltip_font_color = #dddddd 100
 
-#------------------------------------
+## My Configs
 
+## Left Side
 # Applications Menu (Rofi and Dmenu)
 execp = new
-execp_command = echo ""
+execp_command = echo " "
 execp_font_color = #FFFFFF 100
 execp_font = "FiraCode Nerd Font" 15
 execp_has_icon = 0
@@ -198,60 +217,67 @@ execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Applicatio
 execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Applications.sh -r
 execp_tooltip = Applications Menu (Rofi and Dmenu)
 
-# Brightness (Rofi and Dmenu)
-execp = new
-execp_command = bash -c /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh
-execp_font_color = #FFFFFF 100
-execp_font = "FiraCode Nerd Font" 15
-execp_has_icon = 0
-execp_interval = 0
-execp_icon_w = 30
-execp_icon_h =30
-execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh -u
-execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh -d
-execp_tooltip = Brighness Control
 
-# Volume
+## Right Side
+
+# Screen Brightness
 execp = new
-execp_command = bash -c /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Brightness.sh
 execp_font_color = #FFFFFF 100
 execp_font = "FiraCode Nerd Font" 15
 execp_has_icon = 0
-execp_interval = 1
-execp_icon_w = 30
-execp_icon_h =30
-execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh -u
-execp_mclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh -m
-execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh -d
-execp_tooltip = Volume Control
+execp_interval = 2
+execp_tooltip = Screen Brightness
 
 # Battery
 execp = new
-execp_command = bash -c /home/$USER/.config/openbox/scripts/OpenFlexOS_Battery.sh
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Battery.sh
 execp_font_color = #FFFFFF 100
 execp_font = "FiraCode Nerd Font" 15
 execp_has_icon = 0
-execp_interval = 0
-execp_icon_w = 30
-execp_icon_h =30
+execp_interval = 2
 execp_tooltip = Battery Status
 
-# Network Menu (Rofi and Dmenu)
+# Volume
 execp = new
-execp_command = bash -c /home/$USER/.config/openbox/scripts/OpenFlexOS_Network.sh
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh
 execp_font_color = #FFFFFF 100
-execp_font = "FiraCode Nerd Font" 12
+execp_font = "FiraCode Nerd Font" 15
+execp_has_icon = 0
+execp_interval = 2
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh -u
+execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh -d
+execp_mclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Volume.sh -m
+execp_tooltip = Volume
+
+# Network Menu
+execp = new
+execp_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Network.sh
+execp_font_color = #FFFFFF 100
+execp_font = "FiraCode Nerd Font" 15
+execp_has_icon = 0
+execp_interval = 2
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Network.sh -d
+execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Network.sh -r
+execp_tooltip = Network Menu (Rofi and Dmenu)
+execp_padding = 10
+
+# SSH Menu (Rofi and Dmenu)
+execp = new
+execp_command = echo "  "
+execp_font_color = #FFFFFF 100
+execp_font = "FiraCode Nerd Font" 22
 execp_has_icon = 0
 execp_interval = 0
 execp_icon_w = 30
 execp_icon_h =30
-execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Network.sh -d
-execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_Network.sh -r
-execp_tooltip = Network Menu (Rofi and Dmenu)
+execp_lclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_SSH.sh -d
+execp_rclick_command = /home/$USER/.config/openbox/scripts/OpenFlexOS_SSH.sh -r
+execp_tooltip = SSH Menu (Rofi and Dmenu)
 
 # Power Menu (Rofi and Dmenu)
 execp = new
-execp_command = echo "⏻"
+execp_command = echo "⏻ "
 execp_font_color = #FFFFFF 100
 execp_font = "FiraCode Nerd Font" 22
 execp_has_icon = 0

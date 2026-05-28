@@ -11,7 +11,7 @@
 # Load configs
 # ------------------------------------------------
 source "$HOME/.config/dmenu_theme.conf"
-source "$HOME/.config/qtile/scripts/OpenFlexOS_Sounds.sh"
+source "$HOME/.config/$DESKTOP_SESSION/scripts/OpenFlexOS_Sounds.sh"
 
 applications_icon=""
 echo "$applications_icon"
