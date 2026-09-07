@@ -804,58 +804,106 @@ for vt in range(1, 8):
         )
     )
 
-
 # --- Define static groups (permanent workspaces) ---
 static_groups = ["1", "2", "3", "4"]
-groups = [Group(i) for i in static_groups]
+groups = [Group(name) for name in static_groups]
 
-# --- Dynamic workspace creation ---
+
+def create_group_in_number_order(qtile, group_name):
+    """Create a numbered group and keep the groups numerically ordered."""
+    if group_name in qtile.groups_map:
+        return
+
+    # Create the dynamic workspace.
+    qtile.add_group(group_name)
+
+    # Keep all numbered workspaces in numerical order.
+    qtile.groups.sort(
+        key=lambda group: (
+            0,
+            int(group.name),
+        ) if group.name.isdigit() else (
+            1,
+            group.name,
+        )
+    )
+
+
+# --- Switch to or create a workspace ---
 @lazy.function
 def go_to_or_create_group(qtile, group_name):
-    """Go to group if it exists, otherwise create it dynamically."""
-    if group_name not in qtile.groups_map:
-        qtile.add_group(group_name)
+    create_group_in_number_order(qtile, group_name)
     qtile.groups_map[group_name].toscreen()
 
+
+# --- Move a window to or create a workspace ---
 @lazy.function
 def move_window_to_group(qtile, group_name):
-    """Move focused window to a group, creating it if necessary."""
-    if group_name not in qtile.groups_map:
-        qtile.add_group(group_name)
+    create_group_in_number_order(qtile, group_name)
+
     window = qtile.current_window
+
     if window is not None:
         window.togroup(group_name)
-        # Optional: also switch to that group
         qtile.groups_map[group_name].toscreen()
 
-# --- Keybindings for mod+[1–9] and mod+shift+[1–9] ---
+
+# --- Keybindings for workspaces 1–9 ---
 for i in range(1, 10):
     keys.extend([
-        # Switch to workspace (create if needed)
-        Key([mod], str(i),
+        Key(
+            [mod],
+            str(i),
             go_to_or_create_group(str(i)),
-            desc=f"Go to or create group {i}"),
-        # Move focused window to workspace (create if needed)
-        Key([mod, "shift"], str(i),
+            desc=f"Go to or create workspace {i}",
+        ),
+
+        Key(
+            [mod, "shift"],
+            str(i),
             move_window_to_group(str(i)),
-            desc=f"Move window to group {i}")
+            desc=f"Move window to workspace {i}",
+        ),
     ])
 
-# --- Hooks to clean up empty dynamic groups ---
+
+# --- Remove empty dynamic workspaces ---
+def delete_group_if_empty(qtile, group_name):
+    """Delete a dynamic workspace if it is still empty."""
+    group = qtile.groups_map.get(group_name)
+
+    if (
+        group is not None
+        and group.name not in static_groups
+        and group != qtile.current_group
+        and len(group.windows) == 0
+    ):
+        qtile.delete_group(group.name)
+
+
 @hook.subscribe.client_killed
-def remove_empty_dynamic_groups(client):
-    """Delete dynamic groups when their last window closes."""
+def remove_empty_dynamic_group(client):
+    """Remove a dynamic workspace after its last window closes."""
     group = client.group
-    if group.name not in static_groups and len(group.windows) == 0:
-        # Delay slightly to allow Qtile to update internal state
-        client.qtile.call_later(0.5, lambda: client.qtile.delete_group(group.name))
+
+    if group is not None and group.name not in static_groups:
+        group_name = group.name
+
+        client.qtile.call_later(
+            0.5,
+            lambda: delete_group_if_empty(client.qtile, group_name),
+        )
+
 
 @hook.subscribe.setgroup
-def remove_empty_groups_on_switch():
-    """Also delete empty dynamic groups when switching away."""
+def remove_empty_groups_after_switch():
+    """Remove empty dynamic workspaces after leaving them."""
     current_group = qtile.current_group
-    for g in list(qtile.groups_map.values()):
-        if g.name not in static_groups and g != current_group:
-            if len(g.windows) == 0:
-                qtile.delete_group(g.name)
 
+    for group in list(qtile.groups):
+        if (
+            group.name not in static_groups
+            and group != current_group
+            and len(group.windows) == 0
+        ):
+            qtile.delete_group(group.name)
