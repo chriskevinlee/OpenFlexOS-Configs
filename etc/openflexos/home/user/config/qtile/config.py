@@ -119,8 +119,8 @@ def battery_widget():
             show_short_text=False,  # Prevents Qtile from displaying "Full"
             update_interval=1,
             foreground=colors["fg"],
-            background=colors["bg"],
-
+            background=colors["color3"],
+            **powerlineright,
         )
     else:
          return widget.TextBox(text="", width=0,)
@@ -357,6 +357,8 @@ widget.CurrentLayout(
 ),
 
 VolumeWidget(),
+
+battery_widget(),
 
 widget.GenPollText(
     name="updates",
