@@ -119,8 +119,8 @@ def battery_widget():
             show_short_text=False,  # Prevents Qtile from displaying "Full"
             update_interval=1,
             foreground=colors["fg"],
-            background=colors["bg"],
-
+            background=colors["color3"],
+            **powerlineright,
         )
     else:
          return widget.TextBox(text="", width=0,)
@@ -357,6 +357,8 @@ widget.CurrentLayout(
 ),
 
 VolumeWidget(),
+
+battery_widget(),
 
 widget.GenPollText(
     name="updates",
@@ -685,6 +687,42 @@ keys = [
             desc="[conky]Open Terminal and View Updates"
         ),
     ], mode="Launcher"),
+
+
+# Key Chord for Ksnip (Screenshots)
+KeyChord([mod, "shift"], "o", [
+
+    # Fullscreen - All monitors
+    Key(
+        [], "f",
+        lazy.spawn(
+            "/etc/openflexos/usr/local/bin/OpenFlexOS_Ksnip-Screenshot.sh f"
+        ),
+        lazy.ungrab_chord(),
+        desc="[conky]Ksnip Capture all monitors"
+    ),
+
+    # Rectangular area
+    Key(
+        [], "r",
+        lazy.spawn(
+            "/etc/openflexos/usr/local/bin/OpenFlexOS_Ksnip-Screenshot.sh r"
+        ),
+        lazy.ungrab_chord(),
+        desc="[conky]Ksnip Capture rectangular area"
+    ),
+
+    # Active window
+    Key(
+        [], "a",
+        lazy.spawn(
+            "/etc/openflexos/usr/local/bin/OpenFlexOS_Ksnip-Screenshot.sh a"
+        ),
+        lazy.ungrab_chord(),
+        desc="[conky]Ksnip Capture active window"
+    ),
+
+], mode="Screenshot"),
 
     # Key Chord for Flameshot(screenshot)
     KeyChord([mod, "shift"], "i", [
