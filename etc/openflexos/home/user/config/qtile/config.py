@@ -688,41 +688,63 @@ keys = [
         ),
     ], mode="Launcher"),
 
-
 # Key Chord for Ksnip (Screenshots)
 KeyChord([mod, "shift"], "o", [
 
-    # Fullscreen - All monitors
+    # Fullscreen - Save
     Key(
         [], "f",
-        lazy.spawn(
-            "/etc/openflexos/usr/local/bin/OpenFlexOS_Ksnip-Screenshot.sh f"
-        ),
+        lazy.spawn("OpenFlexOS_Ksnip-Screenshot.sh f"),
         lazy.ungrab_chord(),
         desc="[conky]Ksnip Capture all monitors"
     ),
 
-    # Rectangular area
+    # Rectangular area - Save
     Key(
         [], "r",
-        lazy.spawn(
-            "/etc/openflexos/usr/local/bin/OpenFlexOS_Ksnip-Screenshot.sh r"
-        ),
+        lazy.spawn("OpenFlexOS_Ksnip-Screenshot.sh r"),
         lazy.ungrab_chord(),
         desc="[conky]Ksnip Capture rectangular area"
     ),
 
-    # Active window
+    # Active window - Save
     Key(
         [], "a",
-        lazy.spawn(
-            "/etc/openflexos/usr/local/bin/OpenFlexOS_Ksnip-Screenshot.sh a"
-        ),
+        lazy.spawn("OpenFlexOS_Ksnip-Screenshot.sh a"),
         lazy.ungrab_chord(),
         desc="[conky]Ksnip Capture active window"
     ),
 
-], mode="Screenshot"),
+    # Clipboard screenshots
+    KeyChord([], "c", [
+
+        # Fullscreen - Clipboard
+        Key(
+            [], "f",
+            lazy.spawn("OpenFlexOS_Ksnip-Screenshot.sh f copy"),
+            lazy.ungrab_chord(),
+            desc="[conky]Ksnip Copy all monitors"
+        ),
+
+        # Rectangular area - Clipboard
+        Key(
+            [], "r",
+            lazy.spawn("OpenFlexOS_Ksnip-Screenshot.sh r copy"),
+            lazy.ungrab_chord(),
+            desc="[conky]Ksnip Copy rectangular area"
+        ),
+
+        # Active window - Clipboard
+        Key(
+            [], "a",
+            lazy.spawn("OpenFlexOS_Ksnip-Screenshot.sh a copy"),
+            lazy.ungrab_chord(),
+            desc="[conky]Ksnip Copy active window"
+        ),
+
+    ], name="Ksnip Clipboard"),
+
+], name="Ksnip Screenshots"),
 
     # Key Chord for Flameshot(screenshot)
     KeyChord([mod, "shift"], "i", [
