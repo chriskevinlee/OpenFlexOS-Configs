@@ -334,6 +334,7 @@ widget.GroupBox(
     background=colors["bg"],
     padding_x=8,  # Horizontal padding around group names
     padding_y=8,  # Vertical padding (optional)
+    disable_drag=True,
 ),
 widget.Spacer(
     background=colors["bg"],
