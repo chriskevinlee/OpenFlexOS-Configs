@@ -1,4 +1,4 @@
-#############################################################
+############################################################
 ############### Import/from Modules #########################
 #############################################################
 import os
@@ -139,10 +139,14 @@ def resize_floating_window(qtile, width: int = 0, height: int = 0):
 ############### Class #######################################
 #############################################################
 
-# Function to display Screen brightnless and allow left click and right click
 class BrightnessWidget(TextBox):
     def __init__(self):
-        super().__init__(foreground=colors["fg"], background=colors["bg"], padding=8, )
+        super().__init__(
+                foreground=colors["fg"],
+                background=colors["color1"],
+                padding=8,
+                **powerlineright,
+                )
         self.brightness()
         # Add callbacks to the widget
         self.add_callbacks({'Button1': self.on_left_click, 'Button3': self.on_right_click})
@@ -157,6 +161,7 @@ class BrightnessWidget(TextBox):
     def on_right_click(self):
         subprocess.run([get_script_path("OpenFlexOS_Brightness.sh"), "-d"])
         self.brightness()
+
 
 # class VolumeWidget(TextBox):
 class VolumeWidget(widget.TextBox):
@@ -360,6 +365,8 @@ widget.CurrentLayout(
 VolumeWidget(),
 
 battery_widget(),
+
+BrightnessWidget(),
 
 widget.GenPollText(
     name="updates",
